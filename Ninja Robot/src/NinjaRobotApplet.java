@@ -1,22 +1,17 @@
-import br.com.etyllica.EtyllicaFrame;
+import br.com.etyllica.Etyllica;
 import br.com.etyllica.context.Application;
 import br.com.etyllica.util.PathHelper;
 import br.com.nrobot.MainMenu;
 
 
-public class NinjaRobot extends EtyllicaFrame {
+public class NinjaRobotApplet extends Etyllica {
 
 	private static final long serialVersionUID = 787422233224705125L;
 
-	public NinjaRobot() {
+	public NinjaRobotApplet() {
 		super(800, 600);
 	}
 
-	public static void main(String[] args){
-		NinjaRobot game = new NinjaRobot();
-		game.init();
-	}
-	
 	@Override
 	public Application startApplication() {
 		
