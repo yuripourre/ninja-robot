@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import sun.net.www.content.text.plain;
 import br.com.etyllica.context.Application;
 import br.com.etyllica.core.event.GUIEvent;
 import br.com.etyllica.core.event.KeyEvent;
@@ -19,7 +20,9 @@ public class Game extends Application {
 	
 	private Player robot;
 	
+	private int points = 0;
 	
+	private int bombSpeed = 6;
 	private int fallenSpeed = 3;
 	
 	private long lastCreation = 0;
@@ -71,9 +74,13 @@ public class Game extends Application {
 			lastCreation = now;
 			createPiece();
 		}
-		/*for(Fallen layer: fallen) {
-			layer.update(now);
-		}*/
+		
+		for(Fallen layer: fallen) {
+			if(layer.isVisible() && robot.colide(layer)) {
+				layer.setVisible(false);
+				points++;
+			}
+		}
 		
 	}
 	
@@ -81,12 +88,16 @@ public class Game extends Application {
 	public void draw(Graphic g) {
 		background.draw(g);
 		
+		g.setFont(g.getFont().deriveFont(28f));
+		
+		g.escreveX(60, "Points: "+Integer.toString(points));
+				
 		robot.draw(g);
 		
 		for(ImageLayer layer: fallen) {
 			layer.draw(g);
 		}
-		
+				
 	}
 	
 	public GUIEvent updateKeyboard(KeyEvent event) {
