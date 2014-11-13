@@ -19,6 +19,8 @@ public class Player {
 	
 	private GeometricLayer hitbox;
 	
+	private int points = 0;
+	
 	public Player(int x, int y) {
 		layer = new AnimatedLayer(x, y, 64, 64, "robot.png");
 		layer.setFrames(4);
@@ -83,6 +85,14 @@ public class Player {
 		if(event.isKeyUp(KeyEvent.TSK_SETA_ESQUERDA)) {
 			walkLeft = false;
 		}
+	}
+
+	public int getPoints() {
+		return points;
+	}	
+
+	public void addPoint() {
+		points++;
 	}
 	
 }
