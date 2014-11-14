@@ -20,5 +20,9 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 	public int getSpeed() {
 		return speed;
 	}
+	
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
 		
 }

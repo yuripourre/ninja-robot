@@ -22,7 +22,7 @@ public class NinjaRobot extends EtyllicaFrame {
 		
 		String s = PathHelper.currentDirectory();
 		setPath(s+"../");
-		
+				
 		return new MainMenu(w, h);
 	}
 

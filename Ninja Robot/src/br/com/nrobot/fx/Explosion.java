@@ -8,7 +8,7 @@ public class Explosion extends Effect {
 	public Explosion() {
 		super(0, 0, 96, 96, "explosion.png");
 		
-		setSpeed(100);
+		setSpeed(200);
 		setFrames(8);		
 	}
 
@@ -18,7 +18,7 @@ public class Explosion extends Effect {
 		int centerY = layer.getY()+layer.utilHeight()/2;
 		
 		setCoordinates(centerX, centerY);
-		startEffect();
+		startEffect();		
 	}	
 	
 }

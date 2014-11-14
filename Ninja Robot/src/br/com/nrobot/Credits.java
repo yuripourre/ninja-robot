@@ -12,7 +12,9 @@ public class Credits extends Application {
 	private ImageLayer background;
 	
 	private ImageLayer credits;
-			
+	
+	private ImageLayer names;
+	
 	public Credits(int w, int h) {
 		super(w, h);
 	}
@@ -23,8 +25,11 @@ public class Credits extends Application {
 		background = new ImageLayer("background.png");
 		
 		credits = new ImageLayer(0, 80, "buttons/credits.png");
-		credits.centralizeX(background);
-				
+		credits.centralizeX(this);
+		
+		names = new ImageLayer(0, 220, "names.png");
+		names.centralizeX(this);
+		
 		loading = 100;
 	}
 	
@@ -33,6 +38,8 @@ public class Credits extends Application {
 		background.draw(g);
 		
 		credits.draw(g);
+		
+		names.draw(g);
 	}
 	
 	public GUIEvent updateMouse(PointerEvent event) {

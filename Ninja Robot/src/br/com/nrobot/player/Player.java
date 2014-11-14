@@ -21,6 +21,8 @@ public class Player {
 	
 	private int points = 0;
 	
+	private boolean dead = false;
+	
 	public Player(int x, int y) {
 		layer = new AnimatedLayer(x, y, 64, 64, "robot.png");
 		layer.setFrames(4);
@@ -54,9 +56,9 @@ public class Player {
 	public void draw(Graphic g) {
 		layer.draw(g);
 		
-		g.setAlpha(60);
+		/*g.setAlpha(60);
 		g.fillRect(hitbox);
-		g.setAlpha(100);
+		g.setAlpha(100);*/
 	}
 	
 	public boolean colide(Fallen fallen) {
@@ -94,5 +96,13 @@ public class Player {
 	public void addPoint() {
 		points++;
 	}
-	
+
+	public boolean isDead() {
+		return dead;
+	}
+
+	public void setDead(boolean dead) {
+		this.dead = dead;
+	}
+		
 }
