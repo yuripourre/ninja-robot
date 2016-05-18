@@ -1,10 +1,10 @@
 package br.com.nrobot;
 
-import br.com.etyllica.context.Application;
+import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.event.GUIEvent;
+import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
-import br.com.etyllica.core.input.mouse.MouseButton;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.ui.NRButton;
 
@@ -48,7 +48,7 @@ public class MainMenu extends Application {
 		creditsButton.draw(g);
 	}
 	
-	public GUIEvent updateMouse(PointerEvent event) {
+	public void updateMouse(PointerEvent event) {
 		
 		playButton.handleEvent(event);
 		creditsButton.handleEvent(event);
@@ -64,8 +64,6 @@ public class MainMenu extends Application {
 			}
 			
 		}
-		
-		return null;
 	}
 
 }

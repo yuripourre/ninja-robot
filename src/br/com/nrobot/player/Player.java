@@ -66,25 +66,25 @@ public class Player {
 	}
 
 	public void handleEvent(KeyEvent event) {
-		if(event.isKeyDown(KeyEvent.TSK_SETA_DIREITA)) {
+		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
 			walkRight = true;
 			layer.setYImage(0);
 			
 			turnRight = true;
 		}
 		
-		if(event.isKeyUp(KeyEvent.TSK_SETA_DIREITA)) {
+		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
 			walkRight = false;
 		}
 		
-		if(event.isKeyDown(KeyEvent.TSK_SETA_ESQUERDA)) {
+		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = true;
 			layer.setYImage(64);
 			
 			turnRight = false;
 		}
 		
-		if(event.isKeyUp(KeyEvent.TSK_SETA_ESQUERDA)) {
+		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = false;
 		}
 	}

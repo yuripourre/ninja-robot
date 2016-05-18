@@ -1,6 +1,6 @@
 package br.com.nrobot.fallen;
 
-import br.com.etyllica.animation.listener.OnAnimationFinishListener;
+import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.nrobot.fx.Explosion;
 import br.com.nrobot.player.Player;

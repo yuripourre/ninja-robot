@@ -1,6 +1,6 @@
 package br.com.nrobot.fx;
 
-import br.com.etyllica.effects.Effect;
+import br.com.etyllica.core.effect.Effect;
 import br.com.etyllica.layer.GeometricLayer;
 
 public class Explosion extends Effect {
