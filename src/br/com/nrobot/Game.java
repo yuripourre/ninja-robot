@@ -1,14 +1,15 @@
 package br.com.nrobot;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.animation.script.OpacityAnimation;
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.context.UpdateIntervalListener;
-import br.com.etyllica.core.event.GUIEvent;
 import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
@@ -17,24 +18,39 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Nut;
+import br.com.nrobot.network.client.ActionClientListener;
+import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.player.PinkNinja;
 import br.com.nrobot.player.Player;
+import br.com.nrobot.player.RobotNinja;
 
-public class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener {
+public class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, ActionClientListener {
 
+	private NinjaRobotClient client;
+	
 	private ImageLayer background;
 	private ImageLayer gameOver;
 
-	private Player robot;
+	private RobotNinja robot;
+	private PinkNinja pink;
 
 	private long lastCreation = 0;
 	private final long delay = 400;
 
 	private boolean gameIsOver = false;
 
-	private List<Fallen> pieces = new ArrayList<Fallen>();	
+	private List<Fallen> pieces = new ArrayList<Fallen>();
+	
+	private Set<String> players = new LinkedHashSet<String>();
 
 	public Game(int w, int h) {
 		super(w, h);
+	}
+	
+	public Game(int w, int h, NinjaRobotClient client) {
+		super(w, h);
+		this.client = client;
+		this.client.setListener(this);
 	}
 
 	@Override
@@ -52,12 +68,12 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		loadingInfo = "Carregando Jogador";
 
-		robot = new Player(0, 540);		
+		robot = new RobotNinja(0, 540);
+		pink = new PinkNinja(0, 540);
 
 		loading = 100;
 
 		updateAtFixedRate(50, this);
-
 	}
 
 	private void createPiece() {
@@ -121,8 +137,10 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		g.setFont(g.getFont().deriveFont(28f));
 
 		g.drawStringShadowX(60, "Pontos: "+Integer.toString(robot.getPoints()));
+		g.drawStringShadowX(90, "Pontos: "+Integer.toString(pink.getPoints()));
 
 		robot.draw(g);
+		pink.draw(g);
 
 		for(ImageLayer layer: pieces) {
 			layer.draw(g);
@@ -146,6 +164,10 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		if(!robot.isDead()) {
 			robot.handleEvent(event);
+			
+			if(client!=null) {
+				robot.handleEvent(event, client);
+			}
 		}
 	}
 
@@ -180,6 +202,29 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		gameOverAnimation.setInterval(0, 255);
 
 		this.scene.addAnimation(gameOverAnimation);
+	}
+
+	@Override
+	public void exitClient(String id) {
+		players.remove(id);
+	}
+
+	@Override
+	public void joinedClient(String id) {
+		players.add(id);
+	}
+
+	@Override
+	public void receiveMessage(String id, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void init(String[] ids) {
+		for(String id: ids) {
+			players.add(id);	
+		}
 	}
 
 }

@@ -1,7 +1,6 @@
 package br.com.nrobot;
 
 import br.com.etyllica.core.context.Application;
-import br.com.etyllica.core.event.GUIEvent;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
@@ -15,7 +14,6 @@ public class MainMenu extends Application {
 	private ImageLayer logo;
 	
 	private NRButton playButton;
-	
 	private NRButton creditsButton;
 		
 	public MainMenu(int w, int h) {
@@ -56,7 +54,8 @@ public class MainMenu extends Application {
 		if(event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
 			
 			if(playButton.isOnMouse()) {
-				nextApplication = new Game(w, h);
+				//nextApplication = new Game(w, h);
+				nextApplication = new RoomMenu(w, h);
 			}
 			
 			if(creditsButton.isOnMouse()) {

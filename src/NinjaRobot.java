@@ -19,9 +19,7 @@ public class NinjaRobot extends EtyllicaFrame {
 	
 	@Override
 	public Application startApplication() {
-		
-		String s = PathHelper.currentDirectory();
-		setPath(s+"../");
+		initialSetup("../");
 				
 		return new MainMenu(w, h);
 	}

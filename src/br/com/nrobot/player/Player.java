@@ -5,8 +5,9 @@ import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.network.client.NinjaRobotClient;
 
-public class Player {
+public abstract class Player {
 	
 	private AnimatedLayer layer;
 	
@@ -23,8 +24,8 @@ public class Player {
 	
 	private boolean dead = false;
 	
-	public Player(int x, int y) {
-		layer = new AnimatedLayer(x, y, 64, 64, "robot.png");
+	public Player(int x, int y, String path) {
+		layer = new AnimatedLayer(x, y, 64, 64, path);
 		layer.setFrames(4);
 		layer.setSpeed(100);
 		
@@ -87,6 +88,32 @@ public class Player {
 		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = false;
 		}
+	}
+	
+	public void handleEvent(KeyEvent event, NinjaRobotClient client) {
+		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
+			walkRight = true;
+			layer.setYImage(0);
+			
+			turnRight = true;
+		}
+		
+		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
+			walkRight = false;
+		}
+		
+		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
+			walkLeft = true;
+			layer.setYImage(64);
+			
+			turnRight = false;
+		}
+		
+		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
+			walkLeft = false;
+		}
+		
+		client.getProtocol().sendKeyEvent(event);
 	}
 
 	public int getPoints() {
