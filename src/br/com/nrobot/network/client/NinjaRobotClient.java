@@ -1,64 +1,34 @@
 package br.com.nrobot.network.client;
 
-public class NinjaRobotClient implements ActionClientListener {
+import br.com.nrobot.network.NetworkRole;
+
+public class NinjaRobotClient {
 
 	public static final int PORT = 9967;
 	private static final int CLIENT_DELAY = 100;
 	
-	private ActionClientProtocol protocol;
+	private NRobotClientProtocol protocol;
+		
+	private NetworkRole role = NetworkRole.CLIENT;
 	
-	private ActionClientListener listener;
-	
-	public NinjaRobotClient(String ip) {
+	public NinjaRobotClient(NRobotClientListener listener, String ip) {
 		super();
 		
-		ActionClient client = new ActionClient(ip, PORT, this);
+		NRobotClient client = new NRobotClient(ip, PORT, listener);
 		client.start(CLIENT_DELAY);
 		protocol = client.getActionProtocol();
 	}
 	
-	@Override
-	public void exitClient(String id) {
-		if(listener != null) {
-			return;
-		}
-		
-		listener.exitClient(id);
-	}
-
-	@Override
-	public void joinedClient(String id) {
-		if(listener != null) {
-			return;
-		}
-		
-		listener.joinedClient(id);
-	}
-
-	@Override
-	public void receiveMessage(String id, String message) {
-		if(listener != null) {
-			return;
-		}
-		
-		listener.receiveMessage(id, message);
-	}
-
-	@Override
-	public void init(String[] ids) {
-		if(listener != null) {
-			return;
-		}
-		
-		listener.init(ids);
-	}
-
-	public void setListener(ActionClientListener listener) {
-		this.listener = listener;
-	}
-
-	public ActionClientProtocol getProtocol() {
+	public NRobotClientProtocol getProtocol() {
 		return protocol;
+	}
+
+	public void setRole(NetworkRole role) {
+		this.role = role;
+	}
+	
+	public NetworkRole getRole() {
+		return role;
 	}
 	
 }

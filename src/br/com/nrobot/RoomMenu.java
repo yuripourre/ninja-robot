@@ -7,7 +7,8 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.network.client.ActionClient;
+import br.com.nrobot.network.NetworkRole;
+import br.com.nrobot.network.client.NRobotClient;
 import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.ui.NRButton;
 
@@ -60,15 +61,20 @@ public class RoomMenu extends Application {
 				ActionServer server = new ActionServer(NinjaRobotClient.PORT);
 				server.start();
 				
-				NinjaRobotClient client =  new NinjaRobotClient("127.0.0.1");
-				nextApplication = new Game(w, h, client);
+				Game game = new Game(w, h);
+				NinjaRobotClient client =  new NinjaRobotClient(game, "127.0.0.1");
+				client.setRole(NetworkRole.SERVER);
+				game.setClient(client);
+				nextApplication = game;
 			}
 			
 			if(joinButton.isOnMouse()) {
 				String ip = "127.0.0.1";
-				NinjaRobotClient client =  new NinjaRobotClient(ip);
 				
-				nextApplication = new Game(w, h, client);
+				Game game = new Game(w, h);
+				NinjaRobotClient client =  new NinjaRobotClient(game, ip);
+				game.setClient(client);
+				nextApplication = game;
 			}
 			
 		}

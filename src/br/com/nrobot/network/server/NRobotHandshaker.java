@@ -5,11 +5,11 @@ import java.util.Set;
 import br.com.midnight.protocol.handshake.StringHandShaker;
 import examples.action.client.ActionClientProtocol;
 
-public class ActionHandshaker extends StringHandShaker {
+public class NRobotHandshaker extends StringHandShaker {
 
 	private Set<String> players;
 	
-	public ActionHandshaker(Set<String> players) {
+	public NRobotHandshaker(Set<String> players) {
 		super();
 		this.players = players;
 	}

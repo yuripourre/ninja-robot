@@ -5,21 +5,43 @@ import br.com.etyllica.core.event.PointerEvent;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
 
-public class ActionClientProtocol extends StringClientProtocol {
+public class NRobotClientProtocol extends StringClientProtocol {
 	
-	private ActionClientListener listener;
+	private NRobotClientListener listener;
 	
-	public static final String PREFIX_ACTION = "/a";
+	public static final String PREFIX_ACTION = "a";
+	public static final String PREFIX_POSITIONS = "p";
+	
+	public static final String STATE_PRESS = "h";
+	public static final String STATE_RELEASE = "r";
+	public static final String KEY_RIGHT = ">";
+	public static final String KEY_LEFT = "<";
 	
 	public static final String PREFIX_INIT = "i";
 	public static final String PREFIX_JOIN = "j";
 	public static final String PREFIX_EXIT = "q";
 	
-	public ActionClientProtocol(ActionClientListener listener) {
+	public NRobotClientProtocol(NRobotClientListener listener) {
 		super(PREFIX_ACTION);
 		this.listener = listener;
 	}
 
+	public void sendPressKeyLeft() {
+		sendTCP(PREFIX_ACTION+" "+STATE_PRESS+" "+KEY_LEFT);
+	}
+	
+	public void sendReleaseKeyLeft() {
+		sendTCP(PREFIX_ACTION+" "+STATE_RELEASE+" "+KEY_LEFT);
+	}
+	
+	public void sendPressKeyRight() {
+		sendTCP(PREFIX_ACTION+" "+STATE_PRESS+" "+KEY_RIGHT);
+	}
+	
+	public void sendReleaseKeyRight() {
+		sendTCP(PREFIX_ACTION+" "+STATE_RELEASE+" "+KEY_RIGHT);
+	}
+	
 	public void sendKeyEvent(KeyEvent event) {
 		String message = event.getState().toString()
 				+" "+Integer.toString(event.getKey());
@@ -49,6 +71,10 @@ public class ActionClientProtocol extends StringClientProtocol {
 		} else if(msg.startsWith(PREFIX_EXIT)) {
 			String id = msg.split(" ")[1];
 			listener.exitClient(id);
+		} else if(msg.startsWith(PREFIX_POSITIONS)) {
+			String crop = msg.substring((PREFIX_POSITIONS+" ").length());
+			String[] positions = crop.split(" "); 
+			listener.updatePositions(positions);
 		} else {
 			String id = msg.split(" ")[0];
 			String message = msg.split(" ")[1];

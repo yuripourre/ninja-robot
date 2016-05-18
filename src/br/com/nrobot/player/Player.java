@@ -96,10 +96,12 @@ public abstract class Player {
 			layer.setYImage(0);
 			
 			turnRight = true;
+			client.getProtocol().sendPressKeyRight();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
 			walkRight = false;
+			client.getProtocol().sendReleaseKeyRight();
 		}
 		
 		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
@@ -107,13 +109,13 @@ public abstract class Player {
 			layer.setYImage(64);
 			
 			turnRight = false;
+			client.getProtocol().sendPressKeyLeft();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = false;
+			client.getProtocol().sendReleaseKeyLeft();
 		}
-		
-		client.getProtocol().sendKeyEvent(event);
 	}
 
 	public int getPoints() {
@@ -131,5 +133,8 @@ public abstract class Player {
 	public void setDead(boolean dead) {
 		this.dead = dead;
 	}
-		
+	
+	public void setPosition(int position) {
+		layer.setX(position);
+	}
 }

@@ -4,18 +4,20 @@ import br.com.midnight.model.Peer;
 import br.com.midnight.server.TCPServer;
 import examples.action.client.ActionClientProtocol;
 
-public class ActionServer extends TCPServer {
+public class NRobotServer extends TCPServer {
 
-	private ActionServerProtocol listener;
+	private long delay = 100;
+	private long lastUpdate = 0;
+	
+	private NRobotServerProtocol listener;
 
-	public ActionServer(int port) {
+	public NRobotServer(int port) {
 		super(port);
 
-		name = "Action Server";
+		name = "NRobot Server";
 				
-		listener = new ActionServerProtocol(ActionClientProtocol.PREFIX_ACTION);
-		
-		handshaker = new ActionHandshaker(listener.getPlayers());
+		listener = new NRobotServerProtocol(ActionClientProtocol.PREFIX_ACTION);		
+		handshaker = new NRobotHandshaker(listener.getPlayers());
 
 		addProtocol(ActionClientProtocol.PREFIX_ACTION, listener);
 	}
@@ -23,6 +25,13 @@ public class ActionServer extends TCPServer {
 	@Override
 	public void start() {
 		super.start();
+	}
+	
+	@Override
+	public void update(long now) {
+		if(lastUpdate + delay < now) {
+			listener.updatePositions();
+		}
 	}
 	
 	@Override

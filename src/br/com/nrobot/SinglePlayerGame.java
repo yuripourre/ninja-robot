@@ -1,9 +1,7 @@
 package br.com.nrobot;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
@@ -18,16 +16,10 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Nut;
-import br.com.nrobot.network.NetworkRole;
-import br.com.nrobot.network.client.NRobotClientListener;
-import br.com.nrobot.network.client.NinjaRobotClient;
-import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 
-public class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, NRobotClientListener {
+public class SinglePlayerGame extends Application implements OnAnimationFinishListener, UpdateIntervalListener {
 
-	private NinjaRobotClient client;
-	
 	private ImageLayer background;
 	private ImageLayer gameOver;
 
@@ -40,9 +32,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 	private List<Fallen> pieces = new ArrayList<Fallen>();
 	
-	private Map<String, Player> players = new LinkedHashMap<String, Player>();
-
-	public Game(int w, int h) {
+	public SinglePlayerGame(int w, int h) {
 		super(w, h);
 	}
 	
@@ -61,10 +51,8 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		loadingInfo = "Carregando Jogador";
 
-		if(NetworkRole.SERVER.equals(client.getRole())) {
-			robot = new RobotNinja(0, 540);	
-		}
-				
+		robot = new RobotNinja(0, 540);
+
 		loading = 100;
 
 		updateAtFixedRate(50, this);
@@ -130,13 +118,9 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		g.setFont(g.getFont().deriveFont(28f));
 
-		int i=0;
-		for(Player player : players.values()) {
-			g.drawShadow(60+100*i, 60, "Pts: "+Integer.toString(player.getPoints()));
-			player.draw(g);
-			
-			i++;
-		}
+		g.drawStringShadowX(60, "Pontos: "+Integer.toString(robot.getPoints()));
+
+		robot.draw(g);
 
 		for(ImageLayer layer: pieces) {
 			layer.draw(g);
@@ -160,10 +144,6 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		if(!robot.isDead()) {
 			robot.handleEvent(event);
-			
-			if(client!=null) {
-				robot.handleEvent(event, client);
-			}
 		}
 	}
 
@@ -200,43 +180,4 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		this.scene.addAnimation(gameOverAnimation);
 	}
 
-	@Override
-	public void exitClient(String id) {
-		players.remove(id);
-	}
-
-	@Override
-	public void joinedClient(String id) {
-		addPlayer(id);
-	}
-
-	@Override
-	public void receiveMessage(String id, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void init(String[] ids) {
-		for(String id: ids) {
-			addPlayer(id);
-		}
-	}
-
-	private void addPlayer(String id) {
-		players.put(id, new RobotNinja(0, 540));
-	}
-
-	public void setClient(NinjaRobotClient client) {
-		this.client = client;
-	}
-
-	@Override
-	public void updatePositions(String[] positions) {
-		int count = 0;
-		for(Player player : players.values()) {
-			int position = Integer.parseInt(positions[count]); 
-			player.setPosition(position);
-		}
-	}
 }
