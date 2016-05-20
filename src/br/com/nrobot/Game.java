@@ -1,9 +1,7 @@
 package br.com.nrobot;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -182,7 +180,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 	@Override
 	public void updatePositions(String positions) {
-		System.out.println(positions);
+		//System.out.println(positions);
 		String[] values = positions.split(" ");
 
 		for (int i = 0;i < values.length; i += 5) {

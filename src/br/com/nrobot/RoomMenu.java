@@ -1,7 +1,5 @@
 package br.com.nrobot;
 
-import examples.action.server.ActionServer;
-import examples.action.view.ActionClientApplication;
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
@@ -9,7 +7,6 @@ import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.network.NetworkRole;
-import br.com.nrobot.network.client.NRobotClient;
 import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.server.NRobotServer;
 import br.com.nrobot.ui.NRButton;

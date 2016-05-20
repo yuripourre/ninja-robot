@@ -1,6 +1,7 @@
 import br.com.etyllica.EtyllicaFrame;
 import br.com.etyllica.core.context.Application;
 import br.com.nrobot.MainMenu;
+import br.com.nrobot.config.ConfigLoader;
 
 
 public class NinjaRobot extends EtyllicaFrame {
@@ -18,7 +19,7 @@ public class NinjaRobot extends EtyllicaFrame {
 	
 	@Override
 	public Application startApplication() {
-		initialSetup("../");
+		initialSetup(ConfigLoader.PATH_PREFIX);
 				
 		return new MainMenu(w, h);
 	}

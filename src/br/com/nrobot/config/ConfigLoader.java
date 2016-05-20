@@ -9,6 +9,7 @@ import br.com.etyllica.util.PathHelper;
 
 public class ConfigLoader {
 
+	public static final String PATH_PREFIX = "";
 	private static final String PARAM_SERVER_IP = "server";
 	private static final String PARAM_NAME = "name";
 
@@ -17,7 +18,10 @@ public class ConfigLoader {
 	}
 
 	public static Config loadConfiguration() {
-		String path = PathHelper.currentDirectory()+"../config/config.txt";
+		
+		
+		
+		String path = PathHelper.currentDirectory()+PATH_PREFIX+"config/config.txt";
 
 		// This will reference one line at a time
 		String line = null;
