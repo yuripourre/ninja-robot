@@ -7,6 +7,7 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
+import br.com.nrobot.config.Config;
 import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClient;
 import br.com.nrobot.network.client.NinjaRobotClient;
@@ -70,7 +71,8 @@ public class RoomMenu extends Application {
 			}
 			
 			if(joinButton.isOnMouse()) {
-				String ip = "127.0.0.1";
+				Config config = (Config)session.get(MainMenu.PARAM_CONFIG);
+				String ip = config.getServerIp();
 				
 				Game game = new Game(w, h);
 				NinjaRobotClient client =  new NinjaRobotClient(game, ip);

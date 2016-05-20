@@ -5,6 +5,8 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
+import br.com.nrobot.config.Config;
+import br.com.nrobot.config.ConfigLoader;
 import br.com.nrobot.ui.NRButton;
 
 public class MainMenu extends Application {
@@ -15,6 +17,8 @@ public class MainMenu extends Application {
 	
 	private NRButton playButton;
 	private NRButton creditsButton;
+	
+	public static final String PARAM_CONFIG = "config";
 		
 	public MainMenu(int w, int h) {
 		super(w, h);
@@ -31,6 +35,9 @@ public class MainMenu extends Application {
 		playButton = new NRButton(232, 300, "play.png");
 		
 		creditsButton = new NRButton(232, 400, "credits.png");
+		
+		Config config = ConfigLoader.loadConfiguration();
+		session.put(PARAM_CONFIG, config);
 		
 		loading = 100;
 	}

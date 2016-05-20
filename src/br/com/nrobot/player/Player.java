@@ -136,6 +136,8 @@ public abstract class Player {
 		} else if(ServerPlayer.STATE_STAND.equals(state)) {
 			walkLeft = false;
 			walkRight = false;
+		} else if(ServerPlayer.STATE_EXPLODED.equals(state))  {
+			layer.setVisible(false);
 		}
 	}
 	
