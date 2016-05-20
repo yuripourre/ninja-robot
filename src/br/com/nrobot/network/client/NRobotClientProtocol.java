@@ -24,6 +24,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String STATE_RELEASE = "r";
 	public static final String KEY_RIGHT = ">";
 	public static final String KEY_LEFT = "<";
+	public static final String KEY_JUMP = "J";
 	public static final String KEY_ITEM = "I";
 	
 	public static final String PREFIX_INIT = "i";
@@ -56,6 +57,10 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	
 	public void sendRessurrect() {
 		sendTCP(PREFIX_CHEAT_CODE+" "+CHEAT_RESSURRECT);
+	}
+	
+	public void sendMessage(String message) {
+		sendTCP(PREFIX_MESSAGE+" "+message);
 	}
 	
 	public void sendKeyEvent(KeyEvent event) {

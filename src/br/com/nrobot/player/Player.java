@@ -5,7 +5,6 @@ import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.network.server.model.ServerPlayer;
 
 public abstract class Player {
 	private String name;

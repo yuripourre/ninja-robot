@@ -24,9 +24,9 @@ import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClientListener;
 import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.server.NRobotServerProtocol;
-import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
+import br.com.nrobot.player.ServerPlayer;
 
 public class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, NRobotClientListener {
 

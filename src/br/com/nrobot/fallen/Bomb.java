@@ -3,8 +3,8 @@ package br.com.nrobot.fallen;
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.nrobot.fx.Explosion;
-import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
+import br.com.nrobot.player.ServerPlayer;
 
 
 public class Bomb extends Fallen {

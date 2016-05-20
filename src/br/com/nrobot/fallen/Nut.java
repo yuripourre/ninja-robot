@@ -1,7 +1,7 @@
 package br.com.nrobot.fallen;
 
-import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
+import br.com.nrobot.player.ServerPlayer;
 
 
 public class Nut extends Fallen {

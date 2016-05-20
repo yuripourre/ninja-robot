@@ -13,7 +13,7 @@ import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Glue;
 import br.com.nrobot.fallen.Nut;
 import br.com.nrobot.network.client.NRobotClientProtocol;
-import br.com.nrobot.network.server.model.ServerPlayer;
+import br.com.nrobot.player.ServerPlayer;
 
 public class NRobotServerProtocol extends StringServerProtocol {
 

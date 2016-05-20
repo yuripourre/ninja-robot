@@ -2,8 +2,8 @@ package br.com.nrobot.fallen;
 
 import br.com.etyllica.core.Updatable;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
+import br.com.nrobot.player.ServerPlayer;
 
 public abstract class Fallen extends ImageLayer implements Updatable {
 

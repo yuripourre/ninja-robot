@@ -1,6 +1,6 @@
 package br.com.nrobot.fallen;
 
-import br.com.nrobot.network.server.model.ServerPlayer;
+import br.com.nrobot.player.ServerPlayer;
 
 
 public class Tonic extends Nut {

@@ -38,6 +38,8 @@ public class NinjaRobotClient {
 		handleKey(event, KeyEvent.VK_A, NRobotClientProtocol.KEY_LEFT);
 		handleKey(event, KeyEvent.VK_LEFT_ARROW, NRobotClientProtocol.KEY_LEFT);
 		handleKey(event, KeyEvent.VK_SPACE, NRobotClientProtocol.KEY_ITEM);
+		handleKey(event, KeyEvent.VK_CTRL_LEFT, NRobotClientProtocol.KEY_JUMP);
+		handleKey(event, KeyEvent.VK_CTRL_RIGHT, NRobotClientProtocol.KEY_JUMP);
 	}
 	
 	private void handleKey(KeyEvent event, int keyCode, String keyText) {

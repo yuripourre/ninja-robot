@@ -1,10 +1,11 @@
-package br.com.nrobot.network.server.model;
+package br.com.nrobot.player;
 
 import java.util.Collection;
 
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.server.NRobotServerProtocol;
+import br.com.nrobot.network.server.model.GamePad;
 
 public class ServerPlayer {
 
@@ -22,7 +23,11 @@ public class ServerPlayer {
 	
 	public int x = 0;
 	public int y = 540;
+	
 	public int speed = 15;
+	public int jumpSpeed = 10;
+	
+	public int jumpDelay = 600;
 	public int freezeDelay = 2500;
 	public int points = 0;
 	public String id = "";
@@ -32,9 +37,12 @@ public class ServerPlayer {
 	
 	public String item = ITEM_NONE;
 	
-	public GamePad pad;	
+	public GamePad pad;
 	public boolean dead = false;
+	public boolean jumping = false;
+	public boolean fallen = false;
 	public long when = 0;
+	public long jumpStart = 0;
 	
 	public ServerPlayer(String id) {
 		super();
@@ -51,6 +59,8 @@ public class ServerPlayer {
 				pad.right = true;
 			} else if (NRobotClientProtocol.KEY_LEFT.equals(key)) {
 				pad.left = true;
+			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
+				pad.jump = true;
 			} else if (NRobotClientProtocol.KEY_ITEM.equals(key)) {
 				useItem(players);
 			}
@@ -62,6 +72,8 @@ public class ServerPlayer {
 				pad.right = false;
 			} else if(NRobotClientProtocol.KEY_LEFT.equals(key)) {
 				pad.left = false;
+			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
+				pad.jump = false;
 			}
 		}
 	}
@@ -104,6 +116,29 @@ public class ServerPlayer {
 			state = STATE_WALK_RIGHT;
 		} else {
 			state = STATE_STAND;
+		}
+		
+		if (pad.jump) {
+			if(!jumping) {
+				jumping = true;
+				jumpStart = now;
+			}
+		}
+		
+		if (jumping) {
+			if (now - jumpStart< jumpDelay) {
+				y -= jumpSpeed;
+			} else if(fallen) {
+				if(y < 540) {
+					y += jumpSpeed;	
+				} else {
+					y = 540;
+					jumping = false;
+					fallen = false;
+				}
+			} else {
+				fallen = true;
+			}
 		}
 	}
 	
