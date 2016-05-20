@@ -5,12 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringServerProtocol;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.fallen.Glue;
 import br.com.nrobot.fallen.Nut;
 import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.server.model.ServerPlayer;
@@ -19,6 +19,9 @@ public class NRobotServerProtocol extends StringServerProtocol {
 
 	public static final String PREFIX_BOMB = "B";
 	public static final String PREFIX_NUT = "N";
+	public static final String PREFIX_GLUE = "G";
+	public static final String PREFIX_TONIC = "T";
+	
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
 
@@ -27,7 +30,8 @@ public class NRobotServerProtocol extends StringServerProtocol {
 
 	private List<Fallen> pieces = new ArrayList<Fallen>();
 	private List<Fallen> bombs = new ArrayList<Fallen>();
-
+	private List<Fallen> glues = new ArrayList<Fallen>();
+	
 	private Map<String, ServerPlayer> players = new LinkedHashMap<String, ServerPlayer>();
 
 	public NRobotServerProtocol(String prefix) {
@@ -37,14 +41,15 @@ public class NRobotServerProtocol extends StringServerProtocol {
 	@Override
 	public void addPeer(Peer peer) {
 		super.addPeer(peer);
-		players.put(peer.getSessionID(), new ServerPlayer(peer.getSessionID()));
-		sendTCPtoAll(NRobotClientProtocol.PREFIX_JOIN+" "+peer.getSessionID());
+		ServerPlayer player = new ServerPlayer(peer.getSessionID());
+		players.put(peer.getSessionID(), player);
+		sendTCPtoAll(NRobotClientProtocol.PREFIX_JOIN+" "+NRobotHandshaker.sendPlayer(player));
 	}
 
 	public void removePeer(Peer peer) {
 		super.removePeer(peer);
 		players.remove(peer.getSessionID());
-		sendTCPtoAll(NRobotClientProtocol.PREFIX_EXIT+" "+peer.getSessionID());
+		sendTCPtoAllExcept(peer, NRobotClientProtocol.PREFIX_EXIT+" "+peer.getSessionID());
 	}
 
 	@Override
@@ -60,10 +65,40 @@ public class NRobotServerProtocol extends StringServerProtocol {
 
 			ServerPlayer player = players.get(peer.getSessionID());
 			if (!player.isDead()) {
-				player.handleEvent(msg);
+				player.handleEvent(msg, players.values());
 			}
+		} else if (msg.startsWith(NRobotClientProtocol.PREFIX_CONFIG)) {
+
+			updateConfig(peer, msg);
+			
+		} else if (msg.startsWith(NRobotClientProtocol.PREFIX_CHEAT_CODE)) {
+			
+			String command = msg.split(" ")[1];
+			
+			if(NRobotClientProtocol.CHEAT_RESSURRECT.equals(command)) {
+				for (ServerPlayer player : players.values()) {
+					player.ressurrect();		
+				}	
+			}
+			
 		} else {
-			//sendTCPtoAll(peer.getSessionID()+" "+msg);	
+			//sendTCPtoAll(peer.getSessionID()+" "+msg);
+		}
+	}
+
+	private void updateConfig(Peer peer, String msg) {
+		ServerPlayer player = players.get(peer.getSessionID());
+		
+		if(NRobotClientProtocol.CONFIG_NAME.equals(msg.split(" ")[1])) {
+			String name = msg.split(" ")[2];
+			player.name = name;
+			
+			sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_NAME+" "+name);
+		} else if(NRobotClientProtocol.CONFIG_SPRITE.equals(msg.split(" ")[1])) {
+			String sprite = msg.split(" ")[2];
+			player.sprite = sprite;
+			
+			sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_SPRITE+" "+sprite);
 		}
 	}
 
@@ -85,13 +120,22 @@ public class NRobotServerProtocol extends StringServerProtocol {
 		for(Fallen bomb : bombs) {
 			message += bomb.asText()+" ";
 		}
+		
+		message += PREFIX_GLUE+" ";
+		for(Fallen glue : glues) {
+			message += glue.asText()+" ";
+		}
 
 		sendTCPtoAll(message);
 	}
 
 	private void createPiece() {
-
-		final int bombPercentage = 8;
+		//0~8 = bomb
+		//8~25 = glue
+		//16~100 = nut
+		
+		final int bombInterval = 8;
+		final int glueInterval = 25;
 
 		Random random = new Random();
 
@@ -101,46 +145,44 @@ public class NRobotServerProtocol extends StringServerProtocol {
 
 		int speed = 3+random.nextInt(3);
 
-		if(type > bombPercentage) {
+		if(type < bombInterval) {
+			bombs.add(new Bomb(x, -20));
+		} else if(type < glueInterval) {
+			glues.add(new Glue(x, -20));
+		} else {
 			Nut nut = new Nut(x, -20);
 			nut.setSpeed(speed);
 
 			pieces.add(nut);
-		} else {
-			bombs.add(new Bomb(x, -20));
 		}
 	}
 
 	public void update(long now) {
 		updatePlayers(now);
-
-		for(int i = pieces.size()-1; i > 0; i--) {
-
-			Fallen fallen = pieces.get(i);
-
-			updatePiece(fallen);
-			fallen.update(now);
-		}
 		
-		for(int i = bombs.size()-1; i > 0; i--) {
-
-			Fallen fallen = bombs.get(i);
-
-			updatePiece(fallen);
-			fallen.update(now);
-		}
-
+		updatePieceList(now, pieces);
+		updatePieceList(now, bombs);
+		updatePieceList(now, glues);
+		
 		if(now > lastCreation + delay) {
 			lastCreation = now;
 			createPiece();
 		}
 	}
+	
+	private void updatePieceList(long now, List<Fallen> list) {
+		for(int i = list.size()-1; i >= 0; i--) {
+			Fallen fallen = list.get(i);
+			updatePiece(fallen, list);
+			fallen.update(now);
+		}
+	}
 
-	private void updatePiece(Fallen fallen) {
+	private void updatePiece(Fallen fallen, List<Fallen> list) {
 		fallen.setOffsetY(fallen.getSpeed());
 
 		if ((fallen.getY() > HEIGHT) ||!fallen.isVisible()) 
-			pieces.remove(fallen);
+			list.remove(fallen);
 
 		for (ServerPlayer player : players.values()) {
 			if (!player.isDead()) {
@@ -149,8 +191,8 @@ public class NRobotServerProtocol extends StringServerProtocol {
 		}
 	}
 
-	public Set<String> getPlayers() {
-		return players.keySet();
+	public Map<String, ServerPlayer>  getPlayers() {
+		return players;
 	}
 
 }

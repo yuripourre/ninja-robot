@@ -33,21 +33,18 @@ public class NinjaRobotClient {
 	}
 	
 	public void handleEvent(KeyEvent event) {
-		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
-			protocol.sendPressKeyRight();
-		}
-		
-		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
-			protocol.sendReleaseKeyRight();
-		}
-		
-		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
-			protocol.sendPressKeyLeft();
-		}
-		
-		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
-			protocol.sendReleaseKeyLeft();
-		}
+		handleKey(event, KeyEvent.VK_D, NRobotClientProtocol.KEY_RIGHT);
+		handleKey(event, KeyEvent.VK_RIGHT_ARROW, NRobotClientProtocol.KEY_RIGHT);
+		handleKey(event, KeyEvent.VK_A, NRobotClientProtocol.KEY_LEFT);
+		handleKey(event, KeyEvent.VK_LEFT_ARROW, NRobotClientProtocol.KEY_LEFT);
+		handleKey(event, KeyEvent.VK_SPACE, NRobotClientProtocol.KEY_ITEM);
 	}
 	
+	private void handleKey(KeyEvent event, int keyCode, String keyText) {
+		if(event.isKeyDown(keyCode)) {
+			protocol.sendPressKey(keyText);
+		} else if(event.isKeyUp(keyCode)) {
+			protocol.sendReleaseKey(keyText);
+		}
+	}
 }

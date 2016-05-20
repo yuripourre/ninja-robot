@@ -44,6 +44,10 @@ public class MainMenu extends Application {
 	
 	@Override
 	public void draw(Graphic g) {
+		//Fix in etyllica
+		if (loading < 100)
+			return;
+		
 		background.draw(g);
 		
 		logo.draw(g);

@@ -13,7 +13,7 @@ public class Bomb extends Fallen {
 	
 	public Bomb(int x, int y, OnAnimationFinishListener listener) {
 	
-		super(x, y, "bomb.png");
+		super(x, y, "items/bomb.png");
 		
 		explosion = new Explosion();
 		explosion.setOnAnimationFinishListener(listener);
@@ -23,7 +23,7 @@ public class Bomb extends Fallen {
 	
 	public Bomb(int x, int y) {
 		
-		super(x, y, "bomb.png");
+		super(x, y, "items/bomb.png");
 		
 		explosion = new Explosion();
 		
@@ -46,23 +46,16 @@ public class Bomb extends Fallen {
 			player.setDead(true);
 		}
 	}
-	
-	@Override
-	public void colide(ServerPlayer player) {
-		if(!visible)
-			return;
 		
-		if(player.colide(this)) {
-			System.out.println("BOOOOOOOOOOOOOOOOOOOOOOOOM!");
-			setVisible(false);
-			player.dead();
-		}
-	}
-	
 	@Override
 	public void draw(Graphic g) {
 		super.draw(g);
 		explosion.draw(g);
+	}
+
+	@Override
+	public void affectPlayer(ServerPlayer player) {
+		player.dead();
 	}
 	
 }

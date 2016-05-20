@@ -1,5 +1,7 @@
 package br.com.nrobot.network.server.model;
 
+import java.util.Collection;
+
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.server.NRobotServerProtocol;
@@ -10,27 +12,37 @@ public class ServerPlayer {
 	public static final String STATE_WALK_LEFT = "l";
 	public static final String STATE_WALK_RIGHT = "r";
 	public static final String STATE_STAND = "s";
-	public static final String STATE_EXPLODED = "e";
+	public static final String STATE_DEAD = "e";
+	public static final String STATE_FREEZE = "f";
+	
+	public static final String ITEM_NONE = "N";
+	public static final String ITEM_GLUE = "Glue";
+	public static final String ITEM_TONIC = "Tonic";
+	public static final String ITEM_RESSURRECT = "Dead";
 	
 	public int x = 0;
 	public int y = 540;
 	public int speed = 15;
+	public int freezeDelay = 2500;
 	public int points = 0;
-	public String name = "";
+	public String id = "";
+	public String name = "Robot";
 	public String state = STATE_STAND;
 	public String sprite = "robot.png";
 	
-	public GamePad pad;
+	public String item = ITEM_NONE;
 	
+	public GamePad pad;	
 	public boolean dead = false;
+	public long when = 0;
 	
-	public ServerPlayer(String name) {
+	public ServerPlayer(String id) {
 		super();
-		this.name = name;
+		this.id = id;
 		pad = new GamePad();
 	}
 	
-	public void handleEvent(String msg) {
+	public void handleEvent(String msg, Collection<ServerPlayer> players) {
 		if(NRobotClientProtocol.STATE_PRESS.equals(msg.split(" ")[1])) {
 			
 			String key = msg.split(" ")[2];
@@ -39,6 +51,8 @@ public class ServerPlayer {
 				pad.right = true;
 			} else if (NRobotClientProtocol.KEY_LEFT.equals(key)) {
 				pad.left = true;
+			} else if (NRobotClientProtocol.KEY_ITEM.equals(key)) {
+				useItem(players);
 			}
 		} else if (NRobotClientProtocol.STATE_RELEASE.equals(msg.split(" ")[1])) {
 			
@@ -52,9 +66,31 @@ public class ServerPlayer {
 		}
 	}
 
+	private void useItem(Collection<ServerPlayer> players) {
+		long now = System.currentTimeMillis();
+		
+		if(ITEM_GLUE.equals(item)) {
+			for(ServerPlayer player : players) {
+				if (player.id == id) {
+					continue;
+				}
+				
+				player.state = STATE_FREEZE;
+				player.when = now;
+			}
+		}
+		
+		item = ITEM_NONE;
+	}
+
 	public void update(long now) {
 		if(dead)
 			return;
+		
+		if(STATE_FREEZE.equals(state)) {
+			if(when + freezeDelay > now)
+				return;
+		}
 		
 		if (pad.left) {
 			if (x > 0) {
@@ -76,7 +112,7 @@ public class ServerPlayer {
 	}
 	
 	public String asText() {
-		return name+" "+x+" "+y+" "+state+" "+points;
+		return id+" "+x+" "+y+" "+state+" "+item+" "+points;
 	}
 
 	public boolean colide(Fallen b) {
@@ -95,13 +131,19 @@ public class ServerPlayer {
 	}
 
 	public boolean isDead() {
-		return dead || ServerPlayer.STATE_EXPLODED.equals(state);
+		return dead || ServerPlayer.STATE_DEAD.equals(state);
 	}
 
 	public void dead() {
 		dead = true;
 		pad.left = false;
 		pad.right = false;
-		state = STATE_EXPLODED;
+		state = STATE_DEAD;
+	}
+
+	public void ressurrect() {
+		dead = false;
+		state = STATE_STAND;
+		item = ITEM_RESSURRECT;
 	}
 }

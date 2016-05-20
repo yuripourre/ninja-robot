@@ -4,6 +4,7 @@ import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
+import br.com.nrobot.config.Config;
 
 public class NRobotClientProtocol extends StringClientProtocol {
 	
@@ -12,36 +13,49 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String PREFIX_NINJA_ROBOT = "nr";
 	
 	public static final String PREFIX_COMMAND = "c";
+	public static final String PREFIX_CONFIG = "f";
 	public static final String PREFIX_POSITIONS = "p";
+	public static final String PREFIX_MESSAGE = "m";
+	public static final String PREFIX_CHEAT_CODE = "d";
+	
+	public static final String CHEAT_RESSURRECT = "ress";
 	
 	public static final String STATE_PRESS = "h";
 	public static final String STATE_RELEASE = "r";
 	public static final String KEY_RIGHT = ">";
 	public static final String KEY_LEFT = "<";
+	public static final String KEY_ITEM = "I";
 	
 	public static final String PREFIX_INIT = "i";
 	public static final String PREFIX_JOIN = "j";
 	public static final String PREFIX_EXIT = "q";
 	
+	public static final String CONFIG_NAME = "cn";
+	public static final String CONFIG_SPRITE = "ci";
+	
 	public NRobotClientProtocol(NRobotClientListener listener) {
 		super(PREFIX_NINJA_ROBOT);
 		this.listener = listener;
 	}
-
-	public void sendPressKeyLeft() {
-		sendTCP(PREFIX_COMMAND+" "+STATE_PRESS+" "+KEY_LEFT);
+	
+	public void sendPressKey(String key) {
+		sendTCP(PREFIX_COMMAND+" "+STATE_PRESS+" "+key);
 	}
 	
-	public void sendReleaseKeyLeft() {
-		sendTCP(PREFIX_COMMAND+" "+STATE_RELEASE+" "+KEY_LEFT);
+	public void sendReleaseKey(String key) {
+		sendTCP(PREFIX_COMMAND+" "+STATE_RELEASE+" "+key);
 	}
 	
-	public void sendPressKeyRight() {
-		sendTCP(PREFIX_COMMAND+" "+STATE_PRESS+" "+KEY_RIGHT);
+	public void sendName(String name) {
+		sendTCP(PREFIX_CONFIG+" "+CONFIG_NAME+" "+name);
 	}
 	
-	public void sendReleaseKeyRight() {
-		sendTCP(PREFIX_COMMAND+" "+STATE_RELEASE+" "+KEY_RIGHT);
+	public void sendSprite(String sprite) {
+		sendTCP(PREFIX_CONFIG+" "+CONFIG_SPRITE+" "+sprite);
+	}
+	
+	public void sendRessurrect() {
+		sendTCP(PREFIX_CHEAT_CODE+" "+CHEAT_RESSURRECT);
 	}
 	
 	public void sendKeyEvent(KeyEvent event) {
@@ -65,20 +79,38 @@ public class NRobotClientProtocol extends StringClientProtocol {
 		if(msg.startsWith(PREFIX_INIT)) {
 			//HandShake message
 			String crop = msg.substring((PREFIX_INIT+" ").length());
-			String[] ids = crop.split(" "); 
+			String[] ids = crop.split(" ");
 			listener.init(ids);
+			
+			Config config = listener.getConfig();
+			sendName(config.getName());
 		} else if(msg.startsWith(PREFIX_JOIN)) {
 			String id = msg.split(" ")[1];
-			listener.joinedClient(id);
+			String name = msg.split(" ")[2];
+			listener.joinedClient(id, name);
 		} else if(msg.startsWith(PREFIX_EXIT)) {
 			String id = msg.split(" ")[1];
 			listener.exitClient(id);
 		} else if(msg.startsWith(PREFIX_POSITIONS)) {
 			String crop = msg.substring((PREFIX_POSITIONS+" ").length());
 			listener.updatePositions(crop);
-		} else {
+		} else if(msg.startsWith(PREFIX_CONFIG)) {
+			String crop = msg.substring((PREFIX_CONFIG+" ").length());
+			
+			String[] parts = crop.split(" ");
+			String id = parts[0];
+			String config = parts[1];
+			String value = parts[2];
+			
+			if(CONFIG_NAME.equals(config)) {
+				listener.updateName(id, value);	
+			} else if(CONFIG_SPRITE.equals(config)) {
+				listener.updateSprite(id, value);	
+			}
+			
+		} else if(msg.startsWith(PREFIX_MESSAGE)) {
 			String id = msg.split(" ")[0];
-			String message = msg.split(" ")[1];
+			String message = msg.substring((PREFIX_MESSAGE+" ").length());
 			listener.receiveMessage(id, message);
 		}
 	}

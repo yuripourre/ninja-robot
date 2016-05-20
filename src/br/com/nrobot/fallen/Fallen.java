@@ -18,7 +18,17 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 
 	public abstract void colide(Player player);
 	
-	public abstract void colide(ServerPlayer player);
+	public void colide(ServerPlayer player) {
+		if(!visible)
+			return;
+		
+		if(player.colide(this)) {
+			setVisible(false);
+			affectPlayer(player);
+		}
+	}
+	
+	public abstract void affectPlayer(ServerPlayer player);
 	
 	public int getSpeed() {
 		return speed;

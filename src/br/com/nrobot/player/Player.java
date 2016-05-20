@@ -5,11 +5,13 @@ import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.server.model.ServerPlayer;
 
 public abstract class Player {
-	
+	private String name;
+	private String item = ServerPlayer.ITEM_NONE;
+	private String state = ServerPlayer.STATE_STAND;
+		
 	private AnimatedLayer layer;
 	
 	private boolean walkRight = false;
@@ -86,24 +88,6 @@ public abstract class Player {
 			walkLeft = false;
 		}
 	}
-	
-	public void handleEvent(KeyEvent event, NinjaRobotClient client) {
-		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
-			client.getProtocol().sendPressKeyRight();
-		}
-		
-		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
-			client.getProtocol().sendReleaseKeyRight();
-		}
-		
-		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
-			client.getProtocol().sendPressKeyLeft();
-		}
-		
-		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
-			client.getProtocol().sendReleaseKeyLeft();
-		}
-	}
 
 	public int getPoints() {
 		return points;
@@ -127,6 +111,8 @@ public abstract class Player {
 	}
 
 	public void setState(String state) {
+		this.state = state;
+		
 		if(ServerPlayer.STATE_WALK_LEFT.equals(state)) {
 			layer.setYImage(64);
 			walkLeft = true;
@@ -136,7 +122,7 @@ public abstract class Player {
 		} else if(ServerPlayer.STATE_STAND.equals(state)) {
 			walkLeft = false;
 			walkRight = false;
-		} else if(ServerPlayer.STATE_EXPLODED.equals(state))  {
+		} else if(ServerPlayer.STATE_DEAD.equals(state))  {
 			layer.setVisible(false);
 		}
 	}
@@ -152,4 +138,33 @@ public abstract class Player {
 	public void setPoints(int points) {
 		this.points = points;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getItem() {
+		return item;
+	}
+
+	public void setItem(String item) {
+		this.item = item;
+	}
+		
+	public String getState() {
+		return state;
+	}
+
+	public int getX() {
+		return layer.getX();
+	}
+	
+	public int getY() {
+		return layer.getY();
+	}
+	
 }

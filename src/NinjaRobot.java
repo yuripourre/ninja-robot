@@ -20,7 +20,7 @@ public class NinjaRobot extends EtyllicaFrame {
 	@Override
 	public Application startApplication() {
 		initialSetup(ConfigLoader.PATH_PREFIX);
-				
+		
 		return new MainMenu(w, h);
 	}
 
