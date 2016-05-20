@@ -1,5 +1,6 @@
 package br.com.nrobot.network.client;
 
+import br.com.etyllica.core.event.KeyEvent;
 import br.com.nrobot.network.NetworkRole;
 
 public class NinjaRobotClient {
@@ -29,6 +30,24 @@ public class NinjaRobotClient {
 	
 	public NetworkRole getRole() {
 		return role;
+	}
+	
+	public void handleEvent(KeyEvent event) {
+		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
+			protocol.sendPressKeyRight();
+		}
+		
+		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
+			protocol.sendReleaseKeyRight();
+		}
+		
+		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
+			protocol.sendPressKeyLeft();
+		}
+		
+		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
+			protocol.sendReleaseKeyLeft();
+		}
 	}
 	
 }

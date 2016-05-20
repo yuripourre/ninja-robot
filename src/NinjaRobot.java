@@ -1,6 +1,5 @@
 import br.com.etyllica.EtyllicaFrame;
 import br.com.etyllica.core.context.Application;
-import br.com.etyllica.util.PathHelper;
 import br.com.nrobot.MainMenu;
 
 

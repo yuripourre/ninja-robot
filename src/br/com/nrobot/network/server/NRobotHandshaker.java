@@ -3,7 +3,7 @@ package br.com.nrobot.network.server;
 import java.util.Set;
 
 import br.com.midnight.protocol.handshake.StringHandShaker;
-import examples.action.client.ActionClientProtocol;
+import br.com.nrobot.network.client.NRobotClientProtocol;
 
 public class NRobotHandshaker extends StringHandShaker {
 
@@ -16,7 +16,7 @@ public class NRobotHandshaker extends StringHandShaker {
 
 	@Override
 	public String handshakeText(String sessionId) {
-		String message = ActionClientProtocol.PREFIX_ACTION+" "+ActionClientProtocol.PREFIX_INIT+" "+sessionId+" ";
+		String message = NRobotClientProtocol.PREFIX_NINJA_ROBOT+" "+NRobotClientProtocol.PREFIX_INIT+" "+sessionId+" ";
 		
 		for(String player: players) {
 			message += player+" ";

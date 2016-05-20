@@ -6,6 +6,7 @@ import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.server.model.ServerPlayer;
 
 public abstract class Player {
 	
@@ -56,10 +57,6 @@ public abstract class Player {
 
 	public void draw(Graphic g) {
 		layer.draw(g);
-		
-		/*g.setAlpha(60);
-		g.fillRect(hitbox);
-		g.setAlpha(100);*/
 	}
 	
 	public boolean colide(Fallen fallen) {
@@ -92,28 +89,18 @@ public abstract class Player {
 	
 	public void handleEvent(KeyEvent event, NinjaRobotClient client) {
 		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
-			walkRight = true;
-			layer.setYImage(0);
-			
-			turnRight = true;
 			client.getProtocol().sendPressKeyRight();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
-			walkRight = false;
 			client.getProtocol().sendReleaseKeyRight();
 		}
 		
 		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
-			walkLeft = true;
-			layer.setYImage(64);
-			
-			turnRight = false;
 			client.getProtocol().sendPressKeyLeft();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
-			walkLeft = false;
 			client.getProtocol().sendReleaseKeyLeft();
 		}
 	}
@@ -134,7 +121,33 @@ public abstract class Player {
 		this.dead = dead;
 	}
 	
-	public void setPosition(int position) {
-		layer.setX(position);
+	public void setPosition(int x, int y) {
+		layer.setCoordinates(x, y);
+		updateHitbox();
+	}
+
+	public void setState(String state) {
+		if(ServerPlayer.STATE_WALK_LEFT.equals(state)) {
+			layer.setYImage(64);
+			walkLeft = true;
+		} else if(ServerPlayer.STATE_WALK_RIGHT.equals(state)) {
+			layer.setYImage(0);
+			walkRight = true;
+		} else if(ServerPlayer.STATE_STAND.equals(state)) {
+			walkLeft = false;
+			walkRight = false;
+		}
+	}
+	
+	public void updatePlayer(long now) {
+		if(walkLeft||walkRight) {
+			layer.animate(now);
+		} else {
+			layer.stopAnimation();
+		}
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 }

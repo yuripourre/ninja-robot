@@ -42,7 +42,6 @@ public class MainMenu extends Application {
 		logo.draw(g);
 		
 		playButton.draw(g);
-		
 		creditsButton.draw(g);
 	}
 	

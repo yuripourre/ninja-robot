@@ -1,5 +1,6 @@
 package br.com.nrobot.fallen;
 
+import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
 
 
@@ -20,4 +21,14 @@ public class Nut extends Fallen {
 		}
 	}
 	
+	@Override
+	public void colide(ServerPlayer player) {
+		if(!visible)
+			return;
+		
+		if(player.colide(this)) {
+			setVisible(false);
+			player.addPoint();
+		}
+	}
 }

@@ -5,5 +5,5 @@ public interface NRobotClientListener {
 	public void joinedClient(String id);	
 	public void receiveMessage(String id, String message);
 	public void init(String[] ids);
-	public void updatePositions(String[] positions);
+	public void updatePositions(String positions);
 }

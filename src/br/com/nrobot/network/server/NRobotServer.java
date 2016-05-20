@@ -2,6 +2,7 @@ package br.com.nrobot.network.server;
 
 import br.com.midnight.model.Peer;
 import br.com.midnight.server.TCPServer;
+import br.com.nrobot.network.client.NRobotClientProtocol;
 import examples.action.client.ActionClientProtocol;
 
 public class NRobotServer extends TCPServer {
@@ -16,7 +17,7 @@ public class NRobotServer extends TCPServer {
 
 		name = "NRobot Server";
 				
-		listener = new NRobotServerProtocol(ActionClientProtocol.PREFIX_ACTION);		
+		listener = new NRobotServerProtocol(NRobotClientProtocol.PREFIX_NINJA_ROBOT);		
 		handshaker = new NRobotHandshaker(listener.getPlayers());
 
 		addProtocol(ActionClientProtocol.PREFIX_ACTION, listener);
@@ -30,7 +31,7 @@ public class NRobotServer extends TCPServer {
 	@Override
 	public void update(long now) {
 		if(lastUpdate + delay < now) {
-			listener.updatePositions();
+			listener.update(now);
 		}
 	}
 	

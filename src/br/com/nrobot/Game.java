@@ -1,10 +1,11 @@
 package br.com.nrobot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.Set;
 
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.animation.script.OpacityAnimation;
@@ -18,34 +19,30 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Nut;
-import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClientListener;
 import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.server.NRobotServerProtocol;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 
 public class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, NRobotClientListener {
 
+	private String me = "0";
+
 	private NinjaRobotClient client;
-	
+
 	private ImageLayer background;
 	private ImageLayer gameOver;
 
-	private RobotNinja robot;
-
-	private long lastCreation = 0;
-	private final long delay = 400;
-
 	private boolean gameIsOver = false;
 
-	private List<Fallen> pieces = new ArrayList<Fallen>();
-	
+	private Set<Fallen> pieces = new HashSet<Fallen>();
 	private Map<String, Player> players = new LinkedHashMap<String, Player>();
 
 	public Game(int w, int h) {
 		super(w, h);
 	}
-	
+
 	@Override
 	public void load() {
 
@@ -61,66 +58,19 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		loadingInfo = "Carregando Jogador";
 
-		if(NetworkRole.SERVER.equals(client.getRole())) {
-			robot = new RobotNinja(0, 540);	
-		}
-				
 		loading = 100;
 
 		updateAtFixedRate(50, this);
 	}
 
-	private void createPiece() {
-
-		final int bombPercentage = 8;
-
-		Random random = new Random();
-
-		int x = random.nextInt(w);
-
-		int type = random.nextInt(100);
-		
-		int speed = 3+random.nextInt(3);
-
-		if(type > bombPercentage) {
-			
-			Nut nut = new Nut(x, -20);
-			nut.setSpeed(speed);
-			
-			pieces.add(nut);			
-		} else {
-			pieces.add(new Bomb(x, -20, this));
-		}
-
-	}
+	
 
 	@Override
 	public void timeUpdate(long now) {
 
-		if(robot.isDead())
-			return;
-
-		robot.update(now);
-
-		for(int i = pieces.size()-1; i > 0; i--) {
-
-			Fallen fallen = pieces.get(i);
-
-			fallen.setOffsetY(fallen.getSpeed());
-
-			if(fallen.getY()>h)
-				pieces.remove(fallen);
-
-			fallen.update(now);
-
-			fallen.colide(robot);
+		for(Player player : players.values()) {
+			player.updatePlayer(now);
 		}
-
-		if(now > lastCreation+delay) {
-			lastCreation = now;
-			createPiece();
-		}
-
 	}
 
 	@Override
@@ -134,7 +84,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		for(Player player : players.values()) {
 			g.drawShadow(60+100*i, 60, "Pts: "+Integer.toString(player.getPoints()));
 			player.draw(g);
-			
+
 			i++;
 		}
 
@@ -156,17 +106,14 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 	}
 
+	@Override
 	public void updateKeyboard(KeyEvent event) {
-
-		if(!robot.isDead()) {
-			robot.handleEvent(event);
-			
-			if(client!=null) {
-				robot.handleEvent(event, client);
-			}
+		if (client != null) {
+			client.handleEvent(event);
 		}
 	}
 
+	@Override
 	public void updateMouse(PointerEvent event) {
 
 		if(gameIsOver) {
@@ -184,7 +131,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		gameIsOver = true;
 
-		int points = robot.getPoints(); 
+		int points = players.get(me).getPoints(); 
 
 		if(points > 0) {
 			if(points == 1) {
@@ -213,13 +160,15 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	@Override
 	public void receiveMessage(String id, String message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void init(String[] ids) {
-		for(String id: ids) {
-			addPlayer(id);
+		me = ids[0];
+
+		for(int i = 1; i < ids.length; i++) {
+			addPlayer(ids[i]);
 		}
 	}
 
@@ -232,11 +181,58 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	}
 
 	@Override
-	public void updatePositions(String[] positions) {
-		int count = 0;
-		for(Player player : players.values()) {
-			int position = Integer.parseInt(positions[count]); 
-			player.setPosition(position);
+	public void updatePositions(String positions) {
+		System.out.println(positions);
+		String[] values = positions.split(" ");
+
+		for (int i = 0;i < values.length; i += 5) {
+			String id = values[i];
+
+			if(NRobotServerProtocol.PREFIX_NUT.equals(id)) {
+				updateNuts(i+1, values);
+				break;
+			}
+			
+			Player player = players.get(id);
+			if(player == null) {
+				continue;
+			}
+
+			int x = Integer.parseInt(values[i+1]);
+			int y = Integer.parseInt(values[i+2]);
+			String state = values[i+3];
+			int points = Integer.parseInt(values[i+4]);
+
+			player.setPosition(x, y);
+			player.setState(state);
+			player.setPoints(points);
 		}
+	}
+
+	private void updateNuts(int index, String[] values) {
+		pieces.clear();
+				
+		for(int i = index; i < values.length; i+=2) {
+			if(NRobotServerProtocol.PREFIX_BOMB.equals(values[i])) {
+				updateBoms(i+1, values);
+				return;
+			}
+			int x = Integer.parseInt(values[i]);
+			int y = Integer.parseInt(values[i+1]);
+			pieces.add(new Nut(x, y));
+		}
+	}
+
+	private void updateBoms(int index, String[] values) {
+		for(int i = index; i < values.length; i+=2) {
+			if(NRobotServerProtocol.PREFIX_BOMB.equals(values[i])) {
+				updateBoms(i, values);
+				return;
+			}
+			int x = Integer.parseInt(values[i]);
+			int y = Integer.parseInt(values[i+1]);
+			pieces.add(new Bomb(x, y));
+		}
+		
 	}
 }

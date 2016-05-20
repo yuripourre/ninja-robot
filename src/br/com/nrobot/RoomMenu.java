@@ -10,6 +10,7 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClient;
 import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.server.NRobotServer;
 import br.com.nrobot.ui.NRButton;
 
 public class RoomMenu extends Application {
@@ -58,7 +59,7 @@ public class RoomMenu extends Application {
 		if(event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
 			
 			if(createButton.isOnMouse()) {
-				ActionServer server = new ActionServer(NinjaRobotClient.PORT);
+				NRobotServer server = new NRobotServer(NinjaRobotClient.PORT);
 				server.start();
 				
 				Game game = new Game(w, h);

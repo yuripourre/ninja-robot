@@ -2,6 +2,7 @@ package br.com.nrobot.fallen;
 
 import br.com.etyllica.core.Updatable;
 import br.com.etyllica.layer.ImageLayer;
+import br.com.nrobot.network.server.model.ServerPlayer;
 import br.com.nrobot.player.Player;
 
 public abstract class Fallen extends ImageLayer implements Updatable {
@@ -17,6 +18,8 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 
 	public abstract void colide(Player player);
 	
+	public abstract void colide(ServerPlayer player);
+	
 	public int getSpeed() {
 		return speed;
 	}
@@ -24,5 +27,9 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
-		
+
+	public String asText() {
+		return x+" "+y;
+	}
+
 }

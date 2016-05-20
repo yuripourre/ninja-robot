@@ -9,7 +9,9 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	
 	private NRobotClientListener listener;
 	
-	public static final String PREFIX_ACTION = "a";
+	public static final String PREFIX_NINJA_ROBOT = "nr";
+	
+	public static final String PREFIX_COMMAND = "c";
 	public static final String PREFIX_POSITIONS = "p";
 	
 	public static final String STATE_PRESS = "h";
@@ -22,24 +24,24 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String PREFIX_EXIT = "q";
 	
 	public NRobotClientProtocol(NRobotClientListener listener) {
-		super(PREFIX_ACTION);
+		super(PREFIX_NINJA_ROBOT);
 		this.listener = listener;
 	}
 
 	public void sendPressKeyLeft() {
-		sendTCP(PREFIX_ACTION+" "+STATE_PRESS+" "+KEY_LEFT);
+		sendTCP(PREFIX_COMMAND+" "+STATE_PRESS+" "+KEY_LEFT);
 	}
 	
 	public void sendReleaseKeyLeft() {
-		sendTCP(PREFIX_ACTION+" "+STATE_RELEASE+" "+KEY_LEFT);
+		sendTCP(PREFIX_COMMAND+" "+STATE_RELEASE+" "+KEY_LEFT);
 	}
 	
 	public void sendPressKeyRight() {
-		sendTCP(PREFIX_ACTION+" "+STATE_PRESS+" "+KEY_RIGHT);
+		sendTCP(PREFIX_COMMAND+" "+STATE_PRESS+" "+KEY_RIGHT);
 	}
 	
 	public void sendReleaseKeyRight() {
-		sendTCP(PREFIX_ACTION+" "+STATE_RELEASE+" "+KEY_RIGHT);
+		sendTCP(PREFIX_COMMAND+" "+STATE_RELEASE+" "+KEY_RIGHT);
 	}
 	
 	public void sendKeyEvent(KeyEvent event) {
@@ -73,8 +75,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 			listener.exitClient(id);
 		} else if(msg.startsWith(PREFIX_POSITIONS)) {
 			String crop = msg.substring((PREFIX_POSITIONS+" ").length());
-			String[] positions = crop.split(" "); 
-			listener.updatePositions(positions);
+			listener.updatePositions(crop);
 		} else {
 			String id = msg.split(" ")[0];
 			String message = msg.split(" ")[1];
