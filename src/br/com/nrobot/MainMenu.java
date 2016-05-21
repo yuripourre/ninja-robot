@@ -19,6 +19,8 @@ public class MainMenu extends Application {
 	private NRButton creditsButton;
 	
 	public static final String PARAM_CONFIG = "config";
+	public static final String PARAM_CLIENT = "client";
+	public static final String PARAM_GAME = "game";
 		
 	public MainMenu(int w, int h) {
 		super(w, h);

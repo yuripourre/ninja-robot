@@ -6,7 +6,7 @@ import br.com.nrobot.network.client.NRobotClientProtocol;
 
 public class NRobotServer extends TCPServer {
 
-	private long delay = 100;
+	private long delay = 120;
 	private long lastUpdate = 0;
 	
 	private NRobotServerProtocol listener;

@@ -27,6 +27,7 @@ public class NRobotServerProtocol extends StringServerProtocol {
 
 	private long lastCreation = 0;
 	private final long delay = 400;
+	private boolean roomReady = false;
 
 	private List<Fallen> pieces = new ArrayList<Fallen>();
 	private List<Fallen> bombs = new ArrayList<Fallen>();
@@ -100,6 +101,29 @@ public class NRobotServerProtocol extends StringServerProtocol {
 			
 			sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_SPRITE+" "+sprite);
 		}
+		
+		if(NRobotClientProtocol.CONFIG_START.equals(msg.split(" ")[1])) {
+			player.state = ServerPlayer.STATE_READY;
+			sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_READY+" :P");
+			
+			if(players.size() == 0) {
+				return;
+			}
+			
+			boolean start = true;
+			
+			for(ServerPlayer p : players.values()) {
+				if(!ServerPlayer.STATE_READY.equals(p.state)) {
+					start = false;
+					break;
+				}
+			}
+			if (start) {
+				sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_START+" :P");
+				roomReady = true;
+			}
+			
+		}
 	}
 
 	public void updatePlayers(long now) {
@@ -158,6 +182,10 @@ public class NRobotServerProtocol extends StringServerProtocol {
 	}
 
 	public void update(long now) {
+		if(!roomReady) {
+			return;
+		}
+		
 		updatePlayers(now);
 		
 		updatePieceList(now, pieces);

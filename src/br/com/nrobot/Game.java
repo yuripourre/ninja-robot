@@ -14,7 +14,6 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.midnight.protocol.Protocol;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
@@ -23,6 +22,7 @@ import br.com.nrobot.fallen.Nut;
 import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClientListener;
 import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.network.server.NRobotServerProtocol;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
@@ -39,10 +39,12 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	private ImageLayer background;
 	private ImageLayer gameOver;
 
+	
+	private boolean stateReady = false;
 	private boolean gameIsOver = false;
 
 	private Set<Fallen> pieces = new HashSet<Fallen>();
-	private Map<String, Player> players = new LinkedHashMap<String, Player>();
+	private GameState state;
 	
 	public boolean isDrawing = false;
 
@@ -53,9 +55,13 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	@Override
 	public void load() {
 
+		state = (GameState) session.get(MainMenu.PARAM_GAME);
+		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
+		stateReady = true;
+		
 		loadingInfo = "Carregando Imagens";
 
-		background = new ImageLayer("background.png");
+		background = new ImageLayer("background/forest.png");
 
 		loading = 40;
 
@@ -69,14 +75,14 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		loadingInfo = "Carregando Jogador";
 
 		loading = 100;
-
+		
 		updateAtFixedRate(50, this);
 	}
 
 	@Override
 	public void timeUpdate(long now) {
 
-		for(Player player : players.values()) {
+		for(Player player : state.players.values()) {
 			player.updatePlayer(now);
 		}
 	}
@@ -89,7 +95,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		g.setFont(g.getFont().deriveFont(28f));
 
 		int i = 0;
-		for(Player player : players.values()) {
+		for(Player player : state.players.values()) {
 			g.drawShadow(60+120*i, 60, "Pts: "+Integer.toString(player.getPoints()));
 			g.drawShadow(60+120*i, 90, "Item: "+player.getItem());
 			
@@ -146,6 +152,10 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		if (client != null) {
 			client.handleEvent(event);
 		}
+		
+		if(event.isKeyDown(KeyEvent.VK_ESC)) {
+			nextApplication = new MainMenu(w, h);
+		}
 	}
 
 	@Override
@@ -166,7 +176,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 		gameIsOver = true;
 
-		int points = players.get(me).getPoints(); 
+		int points = state.players.get(me).getPoints(); 
 
 		if(points > 0) {
 			if(points == 1) {
@@ -184,7 +194,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 	@Override
 	public void exitClient(String id) {
-		players.remove(id);
+		state.players.remove(id);
 	}
 
 	@Override
@@ -210,11 +220,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	private void addPlayer(String id, String name) {
 		RobotNinja player = new RobotNinja(0, 540);
 		player.setName(name);
-		players.put(id, player);
-	}
-
-	public void setClient(NinjaRobotClient client) {
-		this.client = client;
+		state.players.put(id, player);
 	}
 
 	/**
@@ -222,6 +228,9 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	 */
 	@Override
 	public void updatePositions(String positions) {
+		if (!stateReady)
+			return;
+		
 		//System.out.println(positions);
 		String[] values = positions.split(" ");
 
@@ -235,7 +244,7 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 				break;
 			}
 
-			Player player = players.get(id);
+			Player player = state.players.get(id);
 			if(player == null) {
 				continue;
 			}
@@ -294,18 +303,29 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 
 	@Override
 	public void updateName(String id, String name) {
-		Player player = players.get(id);
+		Player player = state.players.get(id);
 		player.setName(name);
 	}
 
 	@Override
 	public void updateSprite(String id, String sprite) {
-		Player player = players.get(id);
+		Player player = state.players.get(id);
 		//player.setSprite(sprite);
 	}
 
 	@Override
 	public Config getConfig() {
 		return (Config) session.get(MainMenu.PARAM_CONFIG);
+	}
+	
+	@Override
+	public void startGame() {
+		
+	}
+
+	@Override
+	public void updateReady(String id) {
+		// TODO Auto-generated method stub
+		
 	}
 }
