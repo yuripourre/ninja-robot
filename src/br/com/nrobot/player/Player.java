@@ -2,63 +2,42 @@ package br.com.nrobot.player;
 
 import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.graphics.Graphic;
-import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
 
 public abstract class Player {
-	private String name;
-	private String item = ServerPlayer.ITEM_NONE;
-	private String state = ServerPlayer.STATE_STAND;
+	protected String name;
+	protected String item = ServerPlayer.ITEM_NONE;
+	protected String state = ServerPlayer.STATE_DEAD;
 		
-	private AnimatedLayer layer;
+	protected boolean walkRight = false;
+	protected boolean walkLeft = false;
 	
-	private boolean walkRight = false;
-	private boolean walkLeft = false;
+	protected boolean turnRight = false;
 	
-	private boolean turnRight = false;
+	protected int speed = 10;
 	
-	private int speed = 10;
-	
-	private GeometricLayer hitbox;
+	protected GeometricLayer hitbox;
 	
 	private int points = 0;
 	
 	private boolean dead = false;
-	
-	public Player(int x, int y, String path) {
-		layer = new AnimatedLayer(x, y, 64, 64, path);
-		layer.setFrames(4);
-		layer.setSpeed(100);
-		
-		hitbox = new GeometricLayer(x, y, layer.getTileW()-16*2, layer.getTileH()-30);
-	}
-	
-	public void update(long now) {
-		
-		if(walkRight||walkLeft) {
-			
-			if(turnRight) {
-				if(layer.getX()+layer.getTileW()<800-speed)
-					layer.setOffsetX(speed);
-			} else {
-				if(layer.getX()>speed)
-					layer.setOffsetX(-speed);
-			}
-			
-			layer.animate(now);
-		}
-		
-		updateHitbox();
-	}
-	
-	private void updateHitbox() {
-		hitbox.setCoordinates(16+layer.getX(), layer.getY()+4);
-	}
 
-	public void draw(Graphic g) {
-		layer.draw(g);
+	public abstract void turnRight();
+	public abstract void turnLeft();
+	public abstract void die();
+	public abstract void stand();
+	public abstract void walk();
+	public abstract void jumpUp();
+	public abstract void jumpDown();
+	
+	public Player(int x, int y) {
+		super();
 	}
+	
+	public abstract void update(long now);
+
+	public abstract void draw(Graphic g);
 	
 	public boolean colide(Fallen fallen) {
 		return hitbox.colideRect(fallen);
@@ -67,9 +46,8 @@ public abstract class Player {
 	public void handleEvent(KeyEvent event) {
 		if(event.isKeyDown(KeyEvent.VK_RIGHT_ARROW)) {
 			walkRight = true;
-			layer.setYImage(0);
-			
 			turnRight = true;
+			turnRight();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
@@ -78,16 +56,15 @@ public abstract class Player {
 		
 		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = true;
-			layer.setYImage(64);
-			
 			turnRight = false;
+			turnLeft();
 		}
 		
 		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = false;
 		}
 	}
-
+	
 	public int getPoints() {
 		return points;
 	}	
@@ -104,36 +81,38 @@ public abstract class Player {
 		this.dead = dead;
 	}
 	
-	public void setPosition(int x, int y) {
-		layer.setCoordinates(x, y);
-		updateHitbox();
-	}
+	public abstract void setPosition(int x, int y);
 
 	public void setState(String state) {
+		if (this.state == state) {
+			return;
+		}
+		
 		this.state = state;
 		
 		if(ServerPlayer.STATE_WALK_LEFT.equals(state)) {
-			layer.setYImage(64);
+			turnLeft();
+			walk();
 			walkLeft = true;
 		} else if(ServerPlayer.STATE_WALK_RIGHT.equals(state)) {
-			layer.setYImage(0);
+			turnRight();
+			walk();
 			walkRight = true;
 		} else if(ServerPlayer.STATE_STAND.equals(state)) {
+			stand();
 			walkLeft = false;
 			walkRight = false;
+		} else if(ServerPlayer.STATE_JUMPING_DOWN.equals(state)) {
+			jumpDown();
+		} else if(ServerPlayer.STATE_JUMPING_UP.equals(state)) {
+			jumpUp();
 		} else if(ServerPlayer.STATE_DEAD.equals(state))  {
-			layer.setVisible(false);
+			die();
 		}
 	}
+		
+	public abstract void updatePlayer(long now); 
 	
-	public void updatePlayer(long now) {
-		if(walkLeft||walkRight) {
-			layer.animate(now);
-		} else {
-			layer.stopAnimation();
-		}
-	}
-
 	public void setPoints(int points) {
 		this.points = points;
 	}
@@ -158,12 +137,7 @@ public abstract class Player {
 		return state;
 	}
 
-	public int getX() {
-		return layer.getX();
-	}
-	
-	public int getY() {
-		return layer.getY();
-	}
-	
+	public abstract int getX();
+	public abstract int getY();
+		
 }

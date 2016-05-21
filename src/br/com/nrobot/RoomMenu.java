@@ -60,10 +60,10 @@ public class RoomMenu extends Application {
 				NRobotServer server = new NRobotServer(NinjaRobotClient.PORT);
 				server.start();
 				
-				Game game = new Game(w, h);
+				LoungeMenu game = new LoungeMenu(w, h);
 				NinjaRobotClient client =  new NinjaRobotClient(game, "127.0.0.1");
 				client.setRole(NetworkRole.SERVER);
-				game.setClient(client);
+				session.put(MainMenu.PARAM_CLIENT, client);
 				nextApplication = game;
 			}
 			
@@ -71,9 +71,9 @@ public class RoomMenu extends Application {
 				Config config = (Config)session.get(MainMenu.PARAM_CONFIG);
 				String ip = config.getServerIp();
 				
-				Game game = new Game(w, h);
+				LoungeMenu game = new LoungeMenu(w, h);
 				NinjaRobotClient client =  new NinjaRobotClient(game, ip);
-				game.setClient(client);
+				session.put(MainMenu.PARAM_CLIENT, client);
 				nextApplication = game;
 			}
 			

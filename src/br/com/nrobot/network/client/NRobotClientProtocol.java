@@ -31,6 +31,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String PREFIX_JOIN = "j";
 	public static final String PREFIX_EXIT = "q";
 	
+	public static final String CONFIG_START = "st";
 	public static final String CONFIG_NAME = "cn";
 	public static final String CONFIG_SPRITE = "ci";
 	
@@ -53,6 +54,10 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	
 	public void sendSprite(String sprite) {
 		sendTCP(PREFIX_CONFIG+" "+CONFIG_SPRITE+" "+sprite);
+	}
+	
+	public void sendStart() {
+		sendTCP(PREFIX_CONFIG+" "+CONFIG_START);
 	}
 	
 	public void sendRessurrect() {
@@ -111,6 +116,8 @@ public class NRobotClientProtocol extends StringClientProtocol {
 				listener.updateName(id, value);	
 			} else if(CONFIG_SPRITE.equals(config)) {
 				listener.updateSprite(id, value);	
+			} else if(CONFIG_START.equals(config)) {
+				listener.startGame();	
 			}
 			
 		} else if(msg.startsWith(PREFIX_MESSAGE)) {
@@ -125,5 +132,13 @@ public class NRobotClientProtocol extends StringClientProtocol {
 		// TODO Auto-generated method stub
 		
 	}
-			
+
+	public NRobotClientListener getListener() {
+		return listener;
+	}
+
+	public void setListener(NRobotClientListener listener) {
+		this.listener = listener;
+	}
+
 }

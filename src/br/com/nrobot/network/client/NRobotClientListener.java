@@ -3,6 +3,7 @@ package br.com.nrobot.network.client;
 import br.com.nrobot.config.Config;
 
 public interface NRobotClientListener {
+	public void startGame();
 	public void exitClient(String id);
 	public void joinedClient(String id, String name);	
 	public void receiveMessage(String id, String message);

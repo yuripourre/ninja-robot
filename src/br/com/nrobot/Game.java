@@ -14,7 +14,6 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.midnight.protocol.Protocol;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
@@ -213,10 +212,6 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 		players.put(id, player);
 	}
 
-	public void setClient(NinjaRobotClient client) {
-		this.client = client;
-	}
-
 	/**
 	 * @see ServerPlayer.asText()
 	 */
@@ -307,5 +302,10 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	@Override
 	public Config getConfig() {
 		return (Config) session.get(MainMenu.PARAM_CONFIG);
+	}
+	
+	@Override
+	public void startGame() {
+		
 	}
 }

@@ -12,10 +12,12 @@ public class NinjaRobotClient {
 		
 	private NetworkRole role = NetworkRole.CLIENT;
 	
+	private NRobotClient client;
+	
 	public NinjaRobotClient(NRobotClientListener listener, String ip) {
 		super();
 		
-		NRobotClient client = new NRobotClient(ip, PORT, listener);
+		client = new NRobotClient(ip, PORT, listener);
 		client.start(CLIENT_DELAY);
 		protocol = client.getActionProtocol();
 	}
@@ -48,5 +50,9 @@ public class NinjaRobotClient {
 		} else if(event.isKeyUp(keyCode)) {
 			protocol.sendReleaseKey(keyText);
 		}
+	}
+	
+	public void setListener(NRobotClientListener listener) {
+		client.getActionProtocol().setListener(listener);
 	}
 }
