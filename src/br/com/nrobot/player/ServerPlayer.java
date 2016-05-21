@@ -12,6 +12,7 @@ public class ServerPlayer {
 	private static final int SPRITE_SIZE = 64;
 	
 	public static final String STATE_READY = "R";
+	public static final String STATE_NONE = "N";
 	public static final String STATE_WALK_LEFT = "l";
 	public static final String STATE_WALK_RIGHT = "r";
 	public static final String STATE_STAND = "s";
@@ -141,6 +142,7 @@ public class ServerPlayer {
 					y = playerY;
 					jumping = false;
 					fallen = false;
+					state = STATE_STAND;
 				}
 			} else {
 				fallen = true;

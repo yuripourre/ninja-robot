@@ -8,6 +8,7 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.network.server.NRobotServer;
 import br.com.nrobot.ui.NRButton;
 
@@ -64,16 +65,19 @@ public class RoomMenu extends Application {
 				NinjaRobotClient client =  new NinjaRobotClient(game, "127.0.0.1");
 				client.setRole(NetworkRole.SERVER);
 				session.put(MainMenu.PARAM_CLIENT, client);
+				session.put(MainMenu.PARAM_GAME, new GameState());
 				nextApplication = game;
 			}
 			
 			if(joinButton.isOnMouse()) {
+								
 				Config config = (Config)session.get(MainMenu.PARAM_CONFIG);
 				String ip = config.getServerIp();
 				
 				LoungeMenu game = new LoungeMenu(w, h);
 				NinjaRobotClient client =  new NinjaRobotClient(game, ip);
 				session.put(MainMenu.PARAM_CLIENT, client);
+				session.put(MainMenu.PARAM_GAME, new GameState());
 				nextApplication = game;
 			}
 			

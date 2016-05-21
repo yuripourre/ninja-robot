@@ -104,8 +104,14 @@ public class NRobotServerProtocol extends StringServerProtocol {
 		
 		if(NRobotClientProtocol.CONFIG_START.equals(msg.split(" ")[1])) {
 			player.state = ServerPlayer.STATE_READY;
+			sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_READY+" :P");
+			
+			if(players.size() == 0) {
+				return;
+			}
 			
 			boolean start = true;
+			
 			for(ServerPlayer p : players.values()) {
 				if(!ServerPlayer.STATE_READY.equals(p.state)) {
 					start = false;

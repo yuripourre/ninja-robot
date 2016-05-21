@@ -32,6 +32,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String PREFIX_EXIT = "q";
 	
 	public static final String CONFIG_START = "st";
+	public static final String CONFIG_READY = "rd";
 	public static final String CONFIG_NAME = "cn";
 	public static final String CONFIG_SPRITE = "ci";
 	
@@ -103,6 +104,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 			listener.exitClient(id);
 		} else if(msg.startsWith(PREFIX_POSITIONS)) {
 			String crop = msg.substring((PREFIX_POSITIONS+" ").length());
+			System.out.println(crop);
 			listener.updatePositions(crop);
 		} else if(msg.startsWith(PREFIX_CONFIG)) {
 			String crop = msg.substring((PREFIX_CONFIG+" ").length());
@@ -116,8 +118,10 @@ public class NRobotClientProtocol extends StringClientProtocol {
 				listener.updateName(id, value);	
 			} else if(CONFIG_SPRITE.equals(config)) {
 				listener.updateSprite(id, value);	
+			} else if(CONFIG_READY.equals(config)) {
+				listener.updateReady(id);
 			} else if(CONFIG_START.equals(config)) {
-				listener.startGame();	
+				listener.startGame();
 			}
 			
 		} else if(msg.startsWith(PREFIX_MESSAGE)) {

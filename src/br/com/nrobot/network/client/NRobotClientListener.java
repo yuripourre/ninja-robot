@@ -11,5 +11,6 @@ public interface NRobotClientListener {
 	public void updatePositions(String positions);
 	public void updateName(String id, String name);
 	public void updateSprite(String id, String sprite);
+	public void updateReady(String id);
 	public Config getConfig();
 }

@@ -8,7 +8,7 @@ import br.com.nrobot.fallen.Fallen;
 public abstract class Player {
 	protected String name;
 	protected String item = ServerPlayer.ITEM_NONE;
-	protected String state = ServerPlayer.STATE_DEAD;
+	protected String state = ServerPlayer.STATE_NONE;
 		
 	protected boolean walkRight = false;
 	protected boolean walkLeft = false;
