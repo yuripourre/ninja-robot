@@ -13,6 +13,10 @@ import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Glue;
 import br.com.nrobot.fallen.Nut;
 import br.com.nrobot.network.client.NRobotClientProtocol;
+import br.com.nrobot.network.server.ia.DumbAI;
+import br.com.nrobot.network.server.ia.AI;
+import br.com.nrobot.network.server.model.PlayerRole;
+import br.com.nrobot.player.Bot;
 import br.com.nrobot.player.ServerPlayer;
 
 public class NRobotServerProtocol extends StringServerProtocol {
@@ -25,6 +29,9 @@ public class NRobotServerProtocol extends StringServerProtocol {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
 
+	private int bots = 1;
+	private AI ai = new DumbAI();
+	
 	private long lastCreation = 0;
 	private final long delay = 400;
 	private boolean roomReady = false;
@@ -44,6 +51,14 @@ public class NRobotServerProtocol extends StringServerProtocol {
 		super.addPeer(peer);
 		ServerPlayer player = new ServerPlayer(peer.getSessionID());
 		players.put(peer.getSessionID(), player);
+		sendTCPtoAll(NRobotClientProtocol.PREFIX_JOIN+" "+NRobotHandshaker.sendPlayer(player));
+	}
+	
+	private void addBot(String botId, String name) {
+		Bot player = new Bot(botId);
+		player.name = name;
+		
+		players.put(botId, player);
 		sendTCPtoAll(NRobotClientProtocol.PREFIX_JOIN+" "+NRobotHandshaker.sendPlayer(player));
 	}
 
@@ -120,16 +135,30 @@ public class NRobotServerProtocol extends StringServerProtocol {
 			}
 			if (start) {
 				sendTCPtoAll(NRobotClientProtocol.PREFIX_CONFIG+" "+peer.getSessionID()+" "+NRobotClientProtocol.CONFIG_START+" :P");
-				roomReady = true;
+				startGame();
 			}
 			
 		}
+	}
+	
+	private void startGame() {
+		//Start bots
+		for(int i = 0; i < bots; i++) {
+			String id = "B"+i;
+			addBot(id, "BOT "+id);
+		}
+			
+		roomReady = true;
 	}
 
 	public void updatePlayers(long now) {
 		String message = NRobotClientProtocol.PREFIX_POSITIONS+" ";
 
 		for(ServerPlayer player: players.values()) {
+			if(PlayerRole.BOT == player.role) {
+				ai.act((Bot) player);
+			}
+			
 			player.update(now);
 			message += player.asText()+" ";
 		}
@@ -185,7 +214,7 @@ public class NRobotServerProtocol extends StringServerProtocol {
 		if(!roomReady) {
 			return;
 		}
-		
+				
 		updatePlayers(now);
 		
 		updatePieceList(now, pieces);

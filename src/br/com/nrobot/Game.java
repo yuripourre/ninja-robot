@@ -19,11 +19,11 @@ import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Glue;
 import br.com.nrobot.fallen.Nut;
-import br.com.nrobot.network.NetworkRole;
 import br.com.nrobot.network.client.NRobotClientListener;
 import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.network.server.NRobotServerProtocol;
+import br.com.nrobot.network.server.model.NetworkRole;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 import br.com.nrobot.player.ServerPlayer;
@@ -48,14 +48,14 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	
 	public boolean isDrawing = false;
 
-	public Game(int w, int h) {
+	public Game(int w, int h, GameState state) {
 		super(w, h);
+		this.state = state;
 	}
 
 	@Override
 	public void load() {
 
-		state = (GameState) session.get(MainMenu.PARAM_GAME);
 		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
 		stateReady = true;
 		

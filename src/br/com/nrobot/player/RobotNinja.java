@@ -55,7 +55,7 @@ public class RobotNinja extends Player {
 	}
 	
 	public void turnRight() {
-		layer.setYImage(64);
+		layer.setYImage(0);
 	}
 	
 	public void turnLeft() {

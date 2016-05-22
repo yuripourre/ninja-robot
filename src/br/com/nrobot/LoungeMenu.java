@@ -154,7 +154,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 		for(Player player: state.players.values()) {
 
 			slot.simpleDraw(g, cx+160*i, cy);
-			g.drawString(player.getName(), cx+padding+offset*i, cy+padding);
+			g.drawString(player.getName(), cx+padding+offset*i, cy+padding+6);
 
 			if(NRobotClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
 				blueNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);	
@@ -162,12 +162,10 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 				darkNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
 			}
 			
-			String text = "WAIT";
 			if(ServerPlayer.STATE_READY.equals(player.getState())) {
-				text = "READY";
+				String text = "READY";
+				g.drawString(text, cx+padding+offset*i, cy+padding+120);
 			}
-
-			g.drawString(text, cx+padding+offset*i, cy+padding+120);
 
 			i++;
 		}
@@ -176,13 +174,15 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 			Player player = state.players.get(me);
 			if(!ServerPlayer.STATE_READY.equals(player.getState())) {
 				g.drawString(this, "PRESS ENTER TO START");
+			} else {
+				g.drawString(this, "WAITING...");
 			}
 		}
 	}
 
 	@Override
 	public void startGame() {
-		Game game = new Game(w, h);
+		Game game = new Game(w, h, state);
 		client.setListener(game);
 		nextApplication = game;
 	}

@@ -1,7 +1,7 @@
 package br.com.nrobot.network.client;
 
 import br.com.etyllica.core.event.KeyEvent;
-import br.com.nrobot.network.NetworkRole;
+import br.com.nrobot.network.server.model.NetworkRole;
 
 public class NinjaRobotClient {
 

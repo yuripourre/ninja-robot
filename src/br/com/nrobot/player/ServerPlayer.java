@@ -6,6 +6,7 @@ import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.server.NRobotServerProtocol;
 import br.com.nrobot.network.server.model.GamePad;
+import br.com.nrobot.network.server.model.PlayerRole;
 
 public class ServerPlayer {
 
@@ -44,6 +45,8 @@ public class ServerPlayer {
 
 	public String item = ITEM_NONE;
 
+	public PlayerRole role = PlayerRole.HUMAN;
+	
 	public GamePad pad;
 	public boolean dead = false;
 	public boolean jumping = false;
