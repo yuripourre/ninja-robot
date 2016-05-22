@@ -4,6 +4,7 @@ import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.etyllica.layer.StaticLayer;
+import br.com.nrobot.network.client.NRobotClientProtocol;
 
 
 public class BlueNinja extends Player {
@@ -25,6 +26,18 @@ public class BlueNinja extends Player {
 		layer.setSpeed(200);
 		
 		hitbox = new GeometricLayer(x, y, layer.getTileW()-16*2, layer.getTileH()-30); 
+	}
+	
+	public void changeSprite() {		
+		if(NRobotClientProtocol.SPRITE_BLUE.equals(sprite)) {
+			right = new StaticLayer("player/blue_ninja.png");
+			left = new StaticLayer("player/blue_ninja_left.png");	
+		} else {
+			right = new StaticLayer("player/dark_ninja.png");
+			left = new StaticLayer("player/dark_ninja_left.png");
+		}
+		
+		layer.cloneLayer(right);
 	}
 	
 	@Override

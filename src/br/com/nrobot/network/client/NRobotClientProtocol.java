@@ -36,6 +36,9 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String CONFIG_NAME = "cn";
 	public static final String CONFIG_SPRITE = "ci";
 	
+	public static final String SPRITE_BLUE = "b";
+	public static final String SPRITE_DARK = "d";
+	
 	public NRobotClientProtocol(NRobotClientListener listener) {
 		super(PREFIX_NINJA_ROBOT);
 		this.listener = listener;

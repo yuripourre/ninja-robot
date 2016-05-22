@@ -4,15 +4,18 @@ import java.awt.Color;
 
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.event.KeyEvent;
+import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.network.client.NRobotClientListener;
+import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
+import br.com.nrobot.ui.SelectionButton;
 
 public class LoungeMenu extends Application implements NRobotClientListener {
 
@@ -22,7 +25,11 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	private ImageLayer background;
 
 	private ImageLayer slot;
-	private ImageLayer ninja;
+	private ImageLayer blueNinja;
+	private ImageLayer darkNinja;
+	
+	private SelectionButton blueNinjaButton;
+	private SelectionButton darkNinjaButton;
 
 	GameState state;
 
@@ -33,27 +40,38 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	@Override
 	public void load() {
 
+		state = (GameState) session.get(MainMenu.PARAM_GAME);
+		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
+		
 		loadingInfo = "Carregando Imagens";
 
 		background = new ImageLayer("background.png");
 		slot = new ImageLayer("ui/slot.png");
-		ninja = new ImageLayer(0,0,64,64,"player/blue_ninja.png");
+		blueNinja = new ImageLayer(0,0,64,64,"player/blue_ninja.png");
+		darkNinja = new ImageLayer(0,0,64,64,"player/dark_ninja.png");
 
 		loading = 40;
 
-		state = (GameState) session.get(MainMenu.PARAM_GAME);
-		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
-
+		blueNinjaButton = new SelectionButton(40, 370, "player/blue_ninja.png");
+		darkNinjaButton = new SelectionButton(40+160, 370, "player/dark_ninja.png");
+		
 		loading = 100;
 	}
 
 	@Override
 	public void updateKeyboard(KeyEvent event) {
-
 		if(event.isKeyDown(KeyEvent.VK_ENTER)) {
 			client.getProtocol().sendStart();
 		}
-
+	}
+	
+	@Override
+	public void updateMouse(PointerEvent event) {
+		if(blueNinjaButton.updateMouse(event)) {
+			client.getProtocol().sendSprite(NRobotClientProtocol.SPRITE_BLUE);
+		} else if(darkNinjaButton.updateMouse(event)) {
+			client.getProtocol().sendSprite(NRobotClientProtocol.SPRITE_DARK);
+		}
 	}
 
 	@Override
@@ -102,7 +120,10 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	@Override
 	public void updateSprite(String id, String sprite) {
 		Player player = state.players.get(id);
-		//player.setSprite(sprite);
+		if(!player.getSprite().equals(sprite)) {
+			player.setSprite(sprite);
+			player.changeSprite();
+		}
 	}
 	
 
@@ -120,6 +141,9 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	@Override
 	public void draw(Graphic g) {
 		background.draw(g);
+		
+		blueNinjaButton.draw(g);
+		darkNinjaButton.draw(g);
 
 		g.setColor(Color.BLACK);
 		g.setFontSize(30f);
@@ -132,8 +156,12 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 			slot.simpleDraw(g, cx+160*i, cy);
 			g.drawString(player.getName(), cx+padding+offset*i, cy+padding);
 
-			ninja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
-
+			if(NRobotClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
+				blueNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);	
+			} else if(NRobotClientProtocol.SPRITE_DARK.equals(player.getSprite())) {
+				darkNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
+			}
+			
 			String text = "WAIT";
 			if(ServerPlayer.STATE_READY.equals(player.getState())) {
 				text = "READY";

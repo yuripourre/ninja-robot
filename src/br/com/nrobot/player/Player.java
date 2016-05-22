@@ -4,9 +4,11 @@ import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.network.client.NRobotClientProtocol;
 
 public abstract class Player {
 	protected String name;
+	protected String sprite = NRobotClientProtocol.SPRITE_BLUE;
 	protected String item = ServerPlayer.ITEM_NONE;
 	protected String state = ServerPlayer.STATE_NONE;
 		
@@ -111,7 +113,8 @@ public abstract class Player {
 		}
 	}
 		
-	public abstract void updatePlayer(long now); 
+	public abstract void updatePlayer(long now);
+	public abstract void changeSprite();
 	
 	public void setPoints(int points) {
 		this.points = points;
@@ -123,6 +126,14 @@ public abstract class Player {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getSprite() {
+		return sprite;
+	}
+	
+	public void setSprite(String sprite) {
+		this.sprite = sprite;
 	}
 	
 	public String getItem() {
@@ -139,5 +150,5 @@ public abstract class Player {
 
 	public abstract int getX();
 	public abstract int getY();
-		
+			
 }
