@@ -13,7 +13,7 @@ public class Bomb extends Fallen {
 	
 	public Bomb(int x, int y, OnAnimationFinishListener listener) {
 	
-		super(x, y, "items/bomb.png");
+		super(x, y, "items/hive.png");
 		
 		explosion = new Explosion();
 		explosion.setOnAnimationFinishListener(listener);
@@ -23,7 +23,7 @@ public class Bomb extends Fallen {
 	
 	public Bomb(int x, int y) {
 		
-		super(x, y, "items/bomb.png");
+		super(x, y, "items/hive.png");
 		
 		explosion = new Explosion();
 		

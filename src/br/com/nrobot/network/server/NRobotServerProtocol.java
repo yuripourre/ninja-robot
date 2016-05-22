@@ -21,6 +21,7 @@ import br.com.nrobot.player.ServerPlayer;
 
 public class NRobotServerProtocol extends StringServerProtocol {
 
+	public static final String PREFIX_BOT = "B";
 	public static final String PREFIX_BOMB = "B";
 	public static final String PREFIX_NUT = "N";
 	public static final String PREFIX_GLUE = "G";
@@ -144,8 +145,8 @@ public class NRobotServerProtocol extends StringServerProtocol {
 	private void startGame() {
 		//Start bots
 		for(int i = 0; i < bots; i++) {
-			String id = "B"+i;
-			addBot(id, "BOT "+id);
+			String id = PREFIX_BOT+i;
+			addBot(id, "BOT"+(i+1));
 		}
 			
 		roomReady = true;

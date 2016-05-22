@@ -24,6 +24,7 @@ import br.com.nrobot.network.client.NinjaRobotClient;
 import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.network.server.NRobotServerProtocol;
 import br.com.nrobot.network.server.model.NetworkRole;
+import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 import br.com.nrobot.player.ServerPlayer;
@@ -218,9 +219,16 @@ public class Game extends Application implements OnAnimationFinishListener, Upda
 	}
 
 	private void addPlayer(String id, String name) {
-		RobotNinja player = new RobotNinja(0, 540);
-		player.setName(name);
-		state.players.put(id, player);
+		if(id.startsWith(NRobotServerProtocol.PREFIX_BOT)) {
+			RobotNinja player = new RobotNinja(0, 540);
+			player.setName(name);
+			state.players.put(id, player);	
+		} else {
+			BlueNinja player = new BlueNinja(0, 540);
+			player.setName(name);
+			state.players.put(id, player);	
+		}
+		
 	}
 
 	/**
