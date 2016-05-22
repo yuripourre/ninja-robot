@@ -102,4 +102,10 @@ public class RobotNinja extends Player {
 		
 	}
 
+	@Override
+	public void changeSprite() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
