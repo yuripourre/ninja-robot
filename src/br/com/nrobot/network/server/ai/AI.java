@@ -1,4 +1,4 @@
-package br.com.nrobot.network.server.ia;
+package br.com.nrobot.network.server.ai;
 
 import br.com.nrobot.player.Bot;
 
