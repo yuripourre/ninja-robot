@@ -1,6 +1,7 @@
 package br.com.nrobot;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
@@ -58,9 +59,12 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 	@Override
 	public void timeUpdate(long now) {
 
-		for(Player player : state.players.values()) {
+		for(Entry<String, Player> entry : state.players.entrySet()) {
+			Player player = entry.getValue();
 			player.updatePlayer(now);
-			background.setX(-player.getX());
+			if (me.equals(entry.getKey())) {				
+				background.setX(-player.getX());	
+			}
 		}
 	}
 		
@@ -224,7 +228,6 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 			String id = values[i];
 
 			if(NRobotBattleServerProtocol.PREFIX_NUT.equals(id)) {
-				updateNuts(i+1, values);
 				break;
 			}
 
@@ -243,45 +246,6 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 			player.setState(state);
 			player.setItem(item);
 			player.setPoints(points);
-		}
-	}
-
-	private void updateNuts(int index, String[] values) {
-		Set<Fallen> updatedPieces = new HashSet<Fallen>();
-		
-		for(int i = index; i < values.length; i+=2) {
-			if(NRobotBattleServerProtocol.PREFIX_BOMB.equals(values[i])) {
-				updateBombs(i+1, values, updatedPieces);
-				pieces = updatedPieces;
-				return;
-			}
-			int x = Integer.parseInt(values[i]);
-			int y = Integer.parseInt(values[i+1]);
-			updatedPieces.add(new Nut(x, y));
-		}
-	}
-
-	private void updateBombs(int index, String[] values, Set<Fallen> updatedPieces) {
-		for(int i = index; i < values.length; i+=2) {
-			if(NRobotBattleServerProtocol.PREFIX_GLUE.equals(values[i])) {
-				updateGlues(i+1, values, updatedPieces);
-				return;
-			}
-			int x = Integer.parseInt(values[i]);
-			int y = Integer.parseInt(values[i+1]);
-			updatedPieces.add(new Bomb(x, y));
-		}
-	}
-
-	private void updateGlues(int index, String[] values, Set<Fallen> updatedPieces) {
-		for(int i = index; i < values.length; i+=2) {
-			if(NRobotBattleServerProtocol.PREFIX_TONIC.equals(values[i])) {
-				//updateTonics(i+1, values);
-				return;
-			}
-			int x = Integer.parseInt(values[i]);
-			int y = Integer.parseInt(values[i+1]);
-			updatedPieces.add(new Glue(x, y));
 		}
 	}
 

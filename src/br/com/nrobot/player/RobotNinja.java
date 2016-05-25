@@ -108,4 +108,10 @@ public class RobotNinja extends Player {
 		
 	}
 
+	@Override
+	public void attack() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

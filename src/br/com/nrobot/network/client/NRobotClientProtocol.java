@@ -25,6 +25,7 @@ public class NRobotClientProtocol extends StringClientProtocol {
 	public static final String KEY_RIGHT = ">";
 	public static final String KEY_LEFT = "<";
 	public static final String KEY_JUMP = "J";
+	public static final String KEY_ATTACK = "X";
 	public static final String KEY_ITEM = "I";
 	
 	public static final String PREFIX_INIT = "i";

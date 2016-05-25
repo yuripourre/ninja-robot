@@ -30,6 +30,7 @@ public abstract class Player {
 	public abstract void die();
 	public abstract void stand();
 	public abstract void walk();
+	public abstract void attack();
 	public abstract void jumpUp();
 	public abstract void jumpDown();
 	
@@ -86,7 +87,7 @@ public abstract class Player {
 	public abstract void setPosition(int x, int y);
 
 	public void setState(String state) {
-		if (this.state == state) {
+		if (this.state.equals(state)) {
 			return;
 		}
 		
@@ -110,6 +111,8 @@ public abstract class Player {
 			jumpUp();
 		} else if(ServerPlayer.STATE_DEAD.equals(state))  {
 			die();
+		} else if(ServerPlayer.STATE_ATTACK.equals(state))  {
+			attack();
 		}
 	}
 		

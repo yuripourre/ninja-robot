@@ -9,6 +9,7 @@ public class GamePad {
 	
 	public boolean run = false;
 	public boolean jump = false;
+	public boolean attack = false;
 	public boolean special = false;
 	
 }

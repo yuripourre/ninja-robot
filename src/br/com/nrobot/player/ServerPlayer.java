@@ -17,6 +17,7 @@ public class ServerPlayer {
 	public static final String STATE_WALK_LEFT = "l";
 	public static final String STATE_WALK_RIGHT = "r";
 	public static final String STATE_STAND = "s";
+	public static final String STATE_ATTACK = "w";
 	public static final String STATE_DEAD = "e";
 	public static final String STATE_FREEZE = "f";
 	public static final String STATE_JUMPING_UP = "j";
@@ -61,9 +62,12 @@ public class ServerPlayer {
 	}
 
 	public void handleEvent(String msg, Collection<ServerPlayer> players) {
-		if(NRobotClientProtocol.STATE_PRESS.equals(msg.split(" ")[1])) {
-
-			String key = msg.split(" ")[2];
+		
+		String[] parts = msg.split(" ");
+		String state = parts[1];
+		String key = parts[2];
+		
+		if(NRobotClientProtocol.STATE_PRESS.equals(state)) {
 
 			if(NRobotClientProtocol.KEY_RIGHT.equals(key)) {
 				pad.right = true;
@@ -71,12 +75,14 @@ public class ServerPlayer {
 				pad.left = true;
 			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
 				pad.jump = true;
+			} else if (NRobotClientProtocol.KEY_ATTACK.equals(key)) {
+				if(!jumping) {
+					pad.attack = true;
+				}
 			} else if (NRobotClientProtocol.KEY_ITEM.equals(key)) {
 				useItem(players);
 			}
 		} else if (NRobotClientProtocol.STATE_RELEASE.equals(msg.split(" ")[1])) {
-
-			String key = msg.split(" ")[2];
 
 			if (NRobotClientProtocol.KEY_RIGHT.equals(key)) {
 				pad.right = false;
@@ -84,6 +90,8 @@ public class ServerPlayer {
 				pad.left = false;
 			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
 				pad.jump = false;
+			} else if (NRobotClientProtocol.KEY_ATTACK.equals(key)) {
+				pad.attack = false;
 			}
 		}
 	}
@@ -114,16 +122,18 @@ public class ServerPlayer {
 				return;
 		}
 
-		if (pad.left) {
+		if (pad.left && !pad.attack) {
 			if (x > 0) {
 				x-= speed;
 			}
 			state = STATE_WALK_LEFT;
-		} else if (pad.right) {
+		} else if (pad.right && !pad.attack) {
 			if(x + SPRITE_SIZE < NRobotBattleServerProtocol.WIDTH-speed) {
 				x+= speed;
 			}
 			state = STATE_WALK_RIGHT;
+		} else if (pad.attack) {
+			state = STATE_ATTACK;
 		} else {
 			state = STATE_STAND;
 		}

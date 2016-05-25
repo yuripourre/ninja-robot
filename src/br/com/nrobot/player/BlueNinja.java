@@ -23,7 +23,7 @@ public class BlueNinja extends Player {
 		layer = new AnimatedLayer(x, y, 64, 64);
 		layer.cloneLayer(right);
 		layer.setFrames(1);
-		layer.setSpeed(200);
+		layer.setSpeed(100);
 		
 		hitbox = new GeometricLayer(x, y, layer.getTileW()-16*2, layer.getTileH()-30); 
 	}
@@ -114,6 +114,14 @@ public class BlueNinja extends Player {
 		layer.setFrames(1);
 		layer.setNeedleX(layer.getTileW());
 		layer.setNeedleY(layer.getTileH()*2);
+		layer.resetAnimation();
+	}
+
+	@Override
+	public void attack() {
+		layer.setFrames(4);
+		layer.setNeedleX(layer.getTileW());
+		layer.setNeedleY(0);
 		layer.resetAnimation();
 	}
 
