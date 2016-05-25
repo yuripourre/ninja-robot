@@ -13,7 +13,7 @@ public class BlueNinja extends Player {
 	StaticLayer left;
 	
 	AnimatedLayer layer;
-	
+		
 	public BlueNinja(int x, int y) {
 		super(x, y);
 		

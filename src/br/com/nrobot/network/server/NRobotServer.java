@@ -2,7 +2,9 @@ package br.com.nrobot.network.server;
 
 import br.com.midnight.model.Peer;
 import br.com.midnight.server.TCPServer;
+import br.com.nrobot.game.GameMode;
 import br.com.nrobot.network.client.NRobotClientProtocol;
+import br.com.nrobot.network.client.NinjaRobotClient;
 
 public class NRobotServer extends TCPServer {
 
@@ -11,12 +13,20 @@ public class NRobotServer extends TCPServer {
 	
 	private NRobotServerProtocol listener;
 
-	public NRobotServer(int port) {
-		super(port);
-
+	public NRobotServer(GameMode mode) {
+		super();
 		name = "NRobot Server";
-				
-		listener = new NRobotServerProtocol(NRobotClientProtocol.PREFIX_NINJA_ROBOT);		
+		
+		if(GameMode.BATTLE == mode) {
+			this.port = NinjaRobotClient.BATTLE_PORT;
+			listener = new NRobotBattleServerProtocol(NRobotClientProtocol.PREFIX_NINJA_ROBOT);
+		} else {
+			this.port = NinjaRobotClient.STORY_PORT;
+			listener = new NRobotStoryServerProtocol(NRobotClientProtocol.PREFIX_NINJA_ROBOT);
+		}
+		
+		openPort(this.port);
+		
 		handshaker = new NRobotHandshaker(listener.getPlayers());
 
 		addProtocol(NRobotClientProtocol.PREFIX_NINJA_ROBOT, listener);

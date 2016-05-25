@@ -21,6 +21,7 @@ public class MainMenu extends Application {
 	public static final String PARAM_CONFIG = "config";
 	public static final String PARAM_CLIENT = "client";
 	public static final String PARAM_GAME = "game";
+	public static final String PARAM_MODE = "mode";
 		
 	public MainMenu(int w, int h) {
 		super(w, h);
@@ -29,14 +30,20 @@ public class MainMenu extends Application {
 	@Override
 	public void load() {
 				
+		loading = 10;
 		background = new ImageLayer("background.png");
+		
+		loading = 20;
 		
 		logo = new ImageLayer(0, 70, "logo.png");
 		logo.centralizeX(background);
 		
+		loading = 50;
 		playButton = new NRButton(232, 300, "play.png");
 		
 		creditsButton = new NRButton(232, 400, "credits.png");
+		
+		loading = 60;
 		
 		Config config = ConfigLoader.loadConfiguration();
 		session.put(PARAM_CONFIG, config);
@@ -66,8 +73,7 @@ public class MainMenu extends Application {
 		if(event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
 			
 			if(playButton.isOnMouse()) {
-				//nextApplication = new Game(w, h);
-				nextApplication = new RoomMenu(w, h);
+				nextApplication = new GameModeMenu(w, h);
 			}
 			
 			if(creditsButton.isOnMouse()) {

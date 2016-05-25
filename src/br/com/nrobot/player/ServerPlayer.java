@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NRobotClientProtocol;
-import br.com.nrobot.network.server.NRobotServerProtocol;
+import br.com.nrobot.network.server.NRobotBattleServerProtocol;
 import br.com.nrobot.network.server.model.GamePad;
 import br.com.nrobot.network.server.model.PlayerRole;
 
@@ -120,7 +120,7 @@ public class ServerPlayer {
 			}
 			state = STATE_WALK_LEFT;
 		} else if (pad.right) {
-			if(x + SPRITE_SIZE < NRobotServerProtocol.WIDTH-speed) {
+			if(x + SPRITE_SIZE < NRobotBattleServerProtocol.WIDTH-speed) {
 				x+= speed;
 			}
 			state = STATE_WALK_RIGHT;

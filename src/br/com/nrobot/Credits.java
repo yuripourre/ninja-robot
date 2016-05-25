@@ -1,6 +1,7 @@
 package br.com.nrobot;
 
 import br.com.etyllica.core.context.Application;
+import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
@@ -26,7 +27,7 @@ public class Credits extends Application {
 		credits = new ImageLayer(0, 80, "buttons/credits.png");
 		credits.centralizeX(this);
 		
-		names = new ImageLayer(0, 220, "names.png");
+		names = new ImageLayer(0, 220, "ui/names.png");
 		names.centralizeX(this);
 		
 		loading = 100;
@@ -44,6 +45,13 @@ public class Credits extends Application {
 	@Override
 	public void updateMouse(PointerEvent event) {
 		if(event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
+			nextApplication = new MainMenu(w, h);
+		}
+	}
+	
+	@Override
+	public void updateKeyboard(KeyEvent event) {
+		if (event.isKeyDown(KeyEvent.VK_ESC)) {
 			nextApplication = new MainMenu(w, h);
 		}
 	}

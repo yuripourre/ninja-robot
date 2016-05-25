@@ -8,6 +8,7 @@ import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.game.GameMode;
 import br.com.nrobot.network.client.NRobotClientListener;
 import br.com.nrobot.network.client.NRobotClientProtocol;
 import br.com.nrobot.network.client.NinjaRobotClient;
@@ -32,6 +33,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	private SelectionButton darkNinjaButton;
 
 	GameState state;
+	GameMode mode;
 
 	public LoungeMenu(int w, int h) {
 		super(w, h);
@@ -40,6 +42,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	@Override
 	public void load() {
 
+		mode = (GameMode) session.get(MainMenu.PARAM_MODE);
 		state = (GameState) session.get(MainMenu.PARAM_GAME);
 		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
 		
@@ -182,8 +185,16 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 
 	@Override
 	public void startGame() {
-		Game game = new Game(w, h, state);
-		client.setListener(game);
+		
+		Game game;
+		
+		if(GameMode.BATTLE == mode) {
+			game = new BattleModeGame(w, h, state);
+		} else {
+			game = new StoryModeGame(w, h, state);
+		}
+		
+		client.setListener(game);		
 		nextApplication = game;
 	}
 	

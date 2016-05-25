@@ -1,11 +1,13 @@
 package br.com.nrobot.network.client;
 
 import br.com.etyllica.core.event.KeyEvent;
+import br.com.nrobot.game.GameMode;
 import br.com.nrobot.network.server.model.NetworkRole;
 
 public class NinjaRobotClient {
 
-	public static final int PORT = 9967;
+	public static final int BATTLE_PORT = 9967;
+	public static final int STORY_PORT = 9968;
 	private static final int CLIENT_DELAY = 100;
 	
 	private NRobotClientProtocol protocol;
@@ -14,10 +16,15 @@ public class NinjaRobotClient {
 	
 	private NRobotClient client;
 	
-	public NinjaRobotClient(NRobotClientListener listener, String ip) {
+	public NinjaRobotClient(GameMode mode, NRobotClientListener listener, String ip) {
 		super();
 		
-		client = new NRobotClient(ip, PORT, listener);
+		if(GameMode.BATTLE == mode) {
+			client = new NRobotClient(ip, BATTLE_PORT, listener);	
+		} else {
+			client = new NRobotClient(ip, STORY_PORT, listener);
+		}
+		
 		client.start(CLIENT_DELAY);
 		protocol = client.getActionProtocol();
 	}

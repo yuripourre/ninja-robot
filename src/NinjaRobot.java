@@ -14,6 +14,7 @@ public class NinjaRobot extends EtyllicaFrame {
 
 	public static void main(String[] args){
 		NinjaRobot game = new NinjaRobot();
+		game.setTitle("A Ninja Game");
 		game.init();
 	}
 	
