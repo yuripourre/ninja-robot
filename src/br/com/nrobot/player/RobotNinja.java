@@ -1,6 +1,6 @@
 package br.com.nrobot.player;
 
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 
@@ -45,7 +45,7 @@ public class RobotNinja extends Player {
 	}
 	
 	@Override
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 		layer.draw(g);
 	}
 	

@@ -9,7 +9,7 @@ import br.com.etyllica.core.context.UpdateIntervalListener;
 import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
@@ -64,7 +64,7 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 	}
 		
 	@Override
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 
 		background.draw(g);
 
@@ -104,7 +104,7 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 
 	}
 
-	private void drawPlayerModifier(Graphic g, Player player) {
+	private void drawPlayerModifier(Graphics g, Player player) {
 		if(ServerPlayer.STATE_FREEZE.equals(player.getState())) {
 			ice.simpleDraw(g, player.getX(), player.getY());
 		} else if(ServerPlayer.STATE_DEAD.equals(player.getState())) {

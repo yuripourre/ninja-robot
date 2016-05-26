@@ -1,7 +1,7 @@
 package br.com.nrobot.fallen;
 
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.nrobot.fx.Explosion;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
@@ -48,7 +48,7 @@ public class Bomb extends Fallen {
 	}
 		
 	@Override
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 		super.draw(g);
 		explosion.draw(g);
 	}

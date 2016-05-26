@@ -1,10 +1,10 @@
-import br.com.etyllica.EtyllicaFrame;
+import br.com.etyllica.Etyllica;
 import br.com.etyllica.core.context.Application;
 import br.com.nrobot.MainMenu;
 import br.com.nrobot.config.ConfigLoader;
 
 
-public class NinjaRobot extends EtyllicaFrame {
+public class NinjaRobot extends Etyllica {
 
 	private static final long serialVersionUID = 787422233224705125L;
 

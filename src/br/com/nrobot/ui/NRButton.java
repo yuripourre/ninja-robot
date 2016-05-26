@@ -1,7 +1,7 @@
 package br.com.nrobot.ui;
 
 import br.com.etyllica.core.event.PointerEvent;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.etyllica.layer.StaticLayer;
@@ -41,7 +41,7 @@ public class NRButton extends GeometricLayer {
 		board.cloneLayer(boardNormal);
 	}
 	
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 		board.draw(g);
 		label.draw(g);
 		

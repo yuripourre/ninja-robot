@@ -4,7 +4,7 @@ import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.game.GameMode;
 import br.com.nrobot.ui.NRButton;
@@ -36,7 +36,7 @@ public class GameModeMenu extends Application {
 	}
 	
 	@Override
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 		background.draw(g);
 		
 		logo.draw(g);

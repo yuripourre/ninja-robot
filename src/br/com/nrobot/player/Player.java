@@ -1,7 +1,7 @@
 package br.com.nrobot.player;
 
 import br.com.etyllica.core.event.KeyEvent;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.NRobotClientProtocol;
@@ -40,7 +40,7 @@ public abstract class Player {
 	
 	public abstract void update(long now);
 
-	public abstract void draw(Graphic g);
+	public abstract void draw(Graphics g);
 	
 	public boolean colide(Fallen fallen) {
 		return hitbox.colideRect(fallen);

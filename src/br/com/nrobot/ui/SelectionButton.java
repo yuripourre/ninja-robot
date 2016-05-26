@@ -2,7 +2,7 @@ package br.com.nrobot.ui;
 
 import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
-import br.com.etyllica.core.graphics.Graphic;
+import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.etyllica.layer.StaticLayer;
 
@@ -31,7 +31,7 @@ public class SelectionButton {
 		label.centralize(x, y, slot.getW(), slot.getH());
 	}
 	
-	public void draw(Graphic g) {
+	public void draw(Graphics g) {
 		layer.simpleDraw(g, x, y);
 		label.draw(g);
 	}
