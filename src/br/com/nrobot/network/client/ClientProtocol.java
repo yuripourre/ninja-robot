@@ -3,18 +3,15 @@ package br.com.nrobot.network.client;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
 import br.com.nrobot.config.Config;
-import br.com.nrobot.fallen.Bomb;
+import br.com.nrobot.fallen.Hive;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Glue;
-import br.com.nrobot.fallen.Nut;
+import br.com.nrobot.fallen.Leaf;
 import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.server.BattleServerProtocol;
-import br.com.nrobot.player.Player;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ClientProtocol extends StringClientProtocol {
 
@@ -165,14 +162,14 @@ public class ClientProtocol extends StringClientProtocol {
 
 					int x = Integer.parseInt(fields[position]);
 					int y = Integer.parseInt(fields[position + 1]);
-					fallen.add(new Bomb(x, y));
+					fallen.add(new Hive(x, y));
 				}
 				break;
 			}
 
 			int x = Integer.parseInt(fields[position]);
 			int y = Integer.parseInt(fields[position + 1]);
-			fallen.add(new Nut(x, y));
+			fallen.add(new Leaf(x, y));
 		}
 
 		listener.updatePlayers(playersData);

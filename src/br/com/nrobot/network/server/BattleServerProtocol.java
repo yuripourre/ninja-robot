@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Random;
 
 import br.com.midnight.model.Peer;
-import br.com.nrobot.fallen.Bomb;
+import br.com.nrobot.fallen.Hive;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.fallen.Glue;
-import br.com.nrobot.fallen.Nut;
+import br.com.nrobot.fallen.Leaf;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.server.ai.AI;
 import br.com.nrobot.network.server.ai.DumbAI;
@@ -191,14 +191,14 @@ public class BattleServerProtocol extends ServerProtocol {
 		int speed = 3+random.nextInt(3);
 
 		if(type < bombInterval) {
-			bombs.add(new Bomb(x, -20));
+			bombs.add(new Hive(x, -20));
 		} else if(type < glueInterval) {
 			glues.add(new Glue(x, -20));
 		} else {
-			Nut nut = new Nut(x, -20);
-			nut.setSpeed(speed);
+			Leaf leaf = new Leaf(x, -20);
+			leaf.setSpeed(speed);
 
-			pieces.add(nut);
+			pieces.add(leaf);
 		}
 	}
 

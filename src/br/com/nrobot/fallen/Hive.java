@@ -7,26 +7,26 @@ import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
 
 
-public class Bomb extends Fallen {
-	
+public class Hive extends Fallen {
+
 	private Explosion explosion;
-	
-	public Bomb(int x, int y, OnAnimationFinishListener listener) {
-	
+
+	public Hive(int x, int y, OnAnimationFinishListener listener) {
+
 		super(x, y, "items/hive.png");
-		
+
 		explosion = new Explosion();
 		explosion.setOnAnimationFinishListener(listener);
-		
+
 		speed = 6;
 	}
-	
-	public Bomb(int x, int y) {
-		
+
+	public Hive(int x, int y) {
+
 		super(x, y, "items/hive.png");
-		
+
 		explosion = new Explosion();
-		
+
 		speed = 6;
 	}
 
@@ -34,19 +34,19 @@ public class Bomb extends Fallen {
 	public void update(long now) {
 		explosion.animate(now);
 	}
-	
+
 	@Override
 	public void colide(Player player) {
 		if(!visible)
 			return;
-		
+
 		if(player.colide(this)) {
 			setVisible(false);
 			explosion.explode(this);
 			player.setDead(true);
 		}
 	}
-		
+
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
@@ -57,5 +57,5 @@ public class Bomb extends Fallen {
 	public void affectPlayer(ServerPlayer player) {
 		player.dead();
 	}
-	
+
 }
