@@ -1,38 +1,37 @@
 package br.com.nrobot.network.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import br.com.midnight.model.Peer;
-import br.com.nrobot.fallen.Hive;
-import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.fallen.Glue;
-import br.com.nrobot.fallen.Leaf;
+import br.com.nrobot.fallen.*;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.server.ai.AI;
 import br.com.nrobot.network.server.ai.DumbAI;
-import br.com.nrobot.network.server.model.PlayerRole;
 import br.com.nrobot.player.Bot;
 import br.com.nrobot.player.ServerPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class BattleServerProtocol extends ServerProtocol {
 
 	public static final String PREFIX_BOT = "B";
 	public static final String PREFIX_HIVE = "H";
 	public static final String PREFIX_LEAF = "L";
+	public static final String PREFIX_BOMB = "B";
 	public static final String PREFIX_GLUE = "G";
 
 	private static final int NUMBER_OF_BOTS = 1;
 	private static final AI ai = new DumbAI();
 
+	private Random random = new Random();
 	private long lastCreation = 0;
 	private final long delay = 400;
 	private boolean roomReady = false;
 
-	private List<Fallen> leaves = new ArrayList<Fallen>();
-	private List<Fallen> hives = new ArrayList<Fallen>();
-	private List<Fallen> glues = new ArrayList<Fallen>();
+	private List<Fallen> leaves = new ArrayList<>();
+	private List<Fallen> hives = new ArrayList<>();
+	private List<Fallen> bombs = new ArrayList<>();
+	private List<Fallen> glues = new ArrayList<>();
 
 	public BattleServerProtocol() {
 		super();
@@ -165,6 +164,11 @@ public class BattleServerProtocol extends ServerProtocol {
 			message += glue.asText() + " ";
 		}
 
+		message += PREFIX_BOMB + " ";
+		for (Fallen bomb : bombs) {
+			message += bomb.asText() + " ";
+		}
+
 		sendTCPtoAll(message);
 	}
 
@@ -174,23 +178,29 @@ public class BattleServerProtocol extends ServerProtocol {
 		final int bombInterval = 8;  // etc...
 		final int glueInterval = 5;
 
-		Random random = new Random();
+		final int x = random.nextInt(WIDTH), y = -20;
+		final int type = random.nextInt(100);
+		int accu = leafInterval;
 
-		int x = random.nextInt(WIDTH);
-
-		int type = random.nextInt(100);
-
-		int speed = 3 + random.nextInt(3);
-
-		if (type < hiveInterval) {
-			hives.add(new Hive(x, -20));
-		} else if (type < glueInterval) {
-			glues.add(new Glue(x, -20));
-		} else {
-			Leaf leaf = new Leaf(x, -20);
-			leaf.setSpeed(speed);
-
+		if (type < accu) {
+			Leaf leaf = new Leaf(x, y);
+			leaf.setSpeed(3 + random.nextInt(3));
 			leaves.add(leaf);
+		} else {
+			accu += hiveInterval;
+			if (type < accu) {
+				hives.add(new Hive(x, y));
+			} else {
+				accu += bombInterval;
+				if (type < accu){
+					bombs.add(new Bomb(x, y));
+				} else {
+					accu += glueInterval;
+					if (type < accu) {
+						glues.add(new Glue(x, y));
+					}
+				}
+			}
 		}
 	}
 
@@ -201,9 +211,10 @@ public class BattleServerProtocol extends ServerProtocol {
 
 		updatePlayers(now);
 
-		updatePieceList(now, leaves);
-		updatePieceList(now, hives);
-		updatePieceList(now, glues);
+		leaves = updatePieceList(now, leaves);
+		hives = updatePieceList(now, hives);
+		glues = updatePieceList(now, glues);
+		bombs = updatePieceList(now, bombs);
 
 		if (now > lastCreation + delay) {
 			lastCreation = now;
@@ -211,25 +222,29 @@ public class BattleServerProtocol extends ServerProtocol {
 		}
 	}
 
-	private void updatePieceList(long now, List<Fallen> list) {
-		for (int i = list.size() - 1; i >= 0; i--) {
-			Fallen fallen = list.get(i);
-			updatePiece(fallen, list);
+	private List<Fallen> updatePieceList(long now, List<Fallen> list) {
+		final List<Fallen> newFallen = new ArrayList<>();
+		for (Fallen fallen : list) {
 			fallen.update(now);
+
+			if (fallen.getY() > HEIGHT) {
+				fallen.markForRemoval();
+			}
+
+			checkCollisions(fallen);
+
+			if (!fallen.isMarkedForRemoval()) {
+				newFallen.add(fallen);
+			}
 		}
+		return newFallen;
 	}
 
-	private void updatePiece(Fallen fallen, List<Fallen> list) {
-		fallen.setOffsetY(fallen.getSpeed());
-
-		if ((fallen.getY() > HEIGHT) || !fallen.isVisible())
-			list.remove(fallen);
-
+	private void checkCollisions(Fallen fallen) {
 		for (ServerPlayer player : players.values()) {
 			if (!player.isDead()) {
 				fallen.colide(player);
 			}
 		}
 	}
-
 }

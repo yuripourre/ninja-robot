@@ -1,6 +1,5 @@
 package br.com.nrobot.fallen;
 
-import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.nrobot.fx.Explosion;
 import br.com.nrobot.player.Player;
@@ -8,14 +7,9 @@ import br.com.nrobot.player.ServerPlayer;
 
 public class Bomb extends Fallen {
 
-	private Explosion explosion;
+	// FIXME: bomb explosion not animating
 
-	public Bomb(int x, int y, OnAnimationFinishListener listener) {
-		super(x, y, "items/bomb.png");
-		explosion = new Explosion();
-		explosion.setOnAnimationFinishListener(listener);
-		speed = 6;
-	}
+	private Explosion explosion;
 
 	public Bomb(int x, int y) {
 		super(x, y, "items/bomb.png");
@@ -25,16 +19,18 @@ public class Bomb extends Fallen {
 
 	@Override
 	public void update(long now) {
+		super.update(now);
 		explosion.animate(now);
 	}
 
 	@Override
 	public void colide(Player player) {
-		if (!visible)
+		if (!visible) {
 			return;
+		}
 
 		if (player.colide(this)) {
-			setVisible(false);
+			markForRemoval();
 			explosion.explode(this);
 			player.setDead(true);
 		}

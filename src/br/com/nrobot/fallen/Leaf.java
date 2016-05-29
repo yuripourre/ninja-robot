@@ -3,7 +3,6 @@ package br.com.nrobot.fallen;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
 
-
 public class Leaf extends Fallen {
 
 	public Leaf(int x, int y) {

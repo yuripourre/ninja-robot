@@ -3,10 +3,7 @@ package br.com.nrobot.network.client;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
 import br.com.nrobot.config.Config;
-import br.com.nrobot.fallen.Hive;
-import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.fallen.Glue;
-import br.com.nrobot.fallen.Leaf;
+import br.com.nrobot.fallen.*;
 import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.server.BattleServerProtocol;
 
@@ -153,11 +150,19 @@ public class ClientProtocol extends StringClientProtocol {
 
 					if (BattleServerProtocol.PREFIX_GLUE.equals(fields[position])) {
 						for (position++; position < fields.length; position += fallenAttributes) {
+							if (BattleServerProtocol.PREFIX_BOMB.equals(fields[position])) {
+								for (position++; position < fields.length; position += fallenAttributes) {
+									int x = Integer.parseInt(fields[position]);
+									int y = Integer.parseInt(fields[position + 1]);
+									fallen.add(new Bomb(x, y));
+								}
+								break fallen;
+							}
 							int x = Integer.parseInt(fields[position]);
 							int y = Integer.parseInt(fields[position + 1]);
 							fallen.add(new Glue(x, y));
 						}
-						break fallen;
+						break;
 					}
 
 					int x = Integer.parseInt(fields[position]);
