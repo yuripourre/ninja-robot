@@ -4,10 +4,14 @@ import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.context.UpdateIntervalListener;
 import br.com.etyllica.core.event.KeyEvent;
+import br.com.etyllica.core.event.MouseButton;
+import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
-import br.com.nrobot.network.client.ClientListener;
+import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.client.Client;
+import br.com.nrobot.network.client.ClientListener;
 import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.NetworkRole;
@@ -15,18 +19,23 @@ import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, ClientListener {
 
 	protected String me = "0";
 
 	protected Client client;
 	protected boolean stateReady = false;
+	protected boolean gameIsOver = false;
 
 	protected ImageLayer ice;
 	protected ImageLayer skull;
 	protected ImageLayer gameOver;
 
 	protected GameState state;
+	protected List<Fallen> fallen = new ArrayList<>();
 
 	public Game(int w, int h, GameState state) {
 		super(w, h);
@@ -71,6 +80,15 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	}
 
 	@Override
+	public void updateMouse(PointerEvent event) {
+		if (gameIsOver) {
+			if (event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
+				nextApplication = new MainMenu(w, h);
+			}
+		}
+	}
+
+	@Override
 	public void exitClient(String id) {
 		state.players.remove(id);
 	}
@@ -103,6 +121,28 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 			player.setName(name);
 			state.players.put(id, player);
 		}
+	}
+
+	@Override
+	public void updatePlayers(List<PlayerData> playersData) {
+		if (!stateReady) {
+			return;
+		}
+		for (PlayerData data : playersData) {
+			Player player = state.players.get(data.id);
+			if (player == null) {
+				continue;
+			}
+			data.setTo(player);
+		}
+	}
+
+	@Override
+	public void updateFallen(List<Fallen> fallen) {
+		if (!stateReady) {
+			return;
+		}
+		this.fallen = fallen;
 	}
 
 	@Override

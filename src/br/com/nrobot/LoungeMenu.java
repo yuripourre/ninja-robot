@@ -1,6 +1,7 @@
 package br.com.nrobot;
 
 import java.awt.Color;
+import java.util.List;
 
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.event.KeyEvent;
@@ -8,7 +9,9 @@ import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.game.GameMode;
+import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.client.ClientListener;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.client.Client;
@@ -50,29 +53,29 @@ public class LoungeMenu extends Application implements ClientListener {
 
 		background = new ImageLayer("background.png");
 		slot = new ImageLayer("ui/slot.png");
-		blueNinja = new ImageLayer(0,0,64,64,"player/blue_ninja.png");
-		darkNinja = new ImageLayer(0,0,64,64,"player/dark_ninja.png");
+		blueNinja = new ImageLayer(0, 0, 64, 64, "player/blue_ninja.png");
+		darkNinja = new ImageLayer(0, 0, 64, 64, "player/dark_ninja.png");
 
 		loading = 40;
 
 		blueNinjaButton = new SelectionButton(40, 370, "player/blue_ninja.png");
-		darkNinjaButton = new SelectionButton(40+160, 370, "player/dark_ninja.png");
+		darkNinjaButton = new SelectionButton(40 + 160, 370, "player/dark_ninja.png");
 
 		loading = 100;
 	}
 
 	@Override
 	public void updateKeyboard(KeyEvent event) {
-		if(event.isKeyDown(KeyEvent.VK_ENTER)) {
+		if (event.isKeyDown(KeyEvent.VK_ENTER)) {
 			client.getProtocol().sendStart();
 		}
 	}
 
 	@Override
 	public void updateMouse(PointerEvent event) {
-		if(blueNinjaButton.updateMouse(event)) {
+		if (blueNinjaButton.updateMouse(event)) {
 			client.getProtocol().sendSprite(ClientProtocol.SPRITE_BLUE);
-		} else if(darkNinjaButton.updateMouse(event)) {
+		} else if (darkNinjaButton.updateMouse(event)) {
 			client.getProtocol().sendSprite(ClientProtocol.SPRITE_DARK);
 		}
 	}
@@ -89,17 +92,23 @@ public class LoungeMenu extends Application implements ClientListener {
 
 	@Override
 	public void receiveMessage(String id, String message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void init(String[] ids) {
 		me = ids[0];
 
-		for(int i = 1; i < ids.length; i+=2) {
-			addPlayer(ids[i], ids[i+1]);
+		for (int i = 1; i < ids.length; i += 2) {
+			addPlayer(ids[i], ids[i + 1]);
 		}
+	}
+
+	@Override
+	public void updatePlayers(List<PlayerData> playersData) {
+	}
+
+	@Override
+	public void updateFallen(List<Fallen> fallen) {
 	}
 
 	private void addPlayer(String id, String name) {
@@ -107,11 +116,6 @@ public class LoungeMenu extends Application implements ClientListener {
 		Player player = new BlueNinja(0, 540);
 		player.setName(name);
 		state.players.put(id, player);
-	}
-
-	@Override
-	public void updatePositions(String positions) {
-
 	}
 
 	@Override
@@ -123,7 +127,7 @@ public class LoungeMenu extends Application implements ClientListener {
 	@Override
 	public void updateSprite(String id, String sprite) {
 		Player player = state.players.get(id);
-		if(!player.getSprite().equals(sprite)) {
+		if (!player.getSprite().equals(sprite)) {
 			player.setSprite(sprite);
 			player.changeSprite();
 		}
@@ -154,28 +158,28 @@ public class LoungeMenu extends Application implements ClientListener {
 		int cx = 30, cy = 70, padding = 30, offset = 160;
 
 		int i = 0;
-		for(Player player: state.players.values()) {
+		for (Player player : state.players.values()) {
 
-			slot.simpleDraw(g, cx+160*i, cy);
-			g.drawString(player.getName(), cx+padding+offset*i, cy+padding+6);
+			slot.simpleDraw(g, cx + 160 * i, cy);
+			g.drawString(player.getName(), cx + padding + offset * i, cy + padding + 6);
 
-			if(ClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
-				blueNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
-			} else if(ClientProtocol.SPRITE_DARK.equals(player.getSprite())) {
-				darkNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
+			if (ClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
+				blueNinja.simpleDraw(g, cx + padding + 10 + 160 * i, cy + padding + 20);
+			} else if (ClientProtocol.SPRITE_DARK.equals(player.getSprite())) {
+				darkNinja.simpleDraw(g, cx + padding + 10 + 160 * i, cy + padding + 20);
 			}
 
-			if(ServerPlayer.STATE_READY.equals(player.getState())) {
+			if (ServerPlayer.STATE_READY.equals(player.getState())) {
 				String text = "READY";
-				g.drawString(text, cx+padding+offset*i, cy+padding+120);
+				g.drawString(text, cx + padding + offset * i, cy + padding + 120);
 			}
 
 			i++;
 		}
 
-		if(state.players.size() > 0) {
+		if (state.players.size() > 0) {
 			Player player = state.players.get(me);
-			if(!ServerPlayer.STATE_READY.equals(player.getState())) {
+			if (!ServerPlayer.STATE_READY.equals(player.getState())) {
 				g.drawString(this, "PRESS ENTER TO START");
 			} else {
 				g.drawString(this, "WAITING...");
@@ -188,7 +192,7 @@ public class LoungeMenu extends Application implements ClientListener {
 
 		Game game;
 
-		if(GameMode.BATTLE == mode) {
+		if (GameMode.BATTLE == mode) {
 			game = new BattleModeGame(w, h, state);
 		} else {
 			game = new StoryModeGame(w, h, state);
@@ -197,5 +201,4 @@ public class LoungeMenu extends Application implements ClientListener {
 		client.setListener(game);
 		nextApplication = game;
 	}
-
 }

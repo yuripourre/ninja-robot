@@ -3,6 +3,18 @@ package br.com.nrobot.network.client;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.fallen.Bomb;
+import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.fallen.Glue;
+import br.com.nrobot.fallen.Nut;
+import br.com.nrobot.network.PlayerData;
+import br.com.nrobot.network.server.BattleServerProtocol;
+import br.com.nrobot.player.Player;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ClientProtocol extends StringClientProtocol {
 
@@ -87,8 +99,7 @@ public class ClientProtocol extends StringClientProtocol {
 			listener.exitClient(id);
 		} else if (msg.startsWith(PREFIX_POSITIONS)) {
 			String crop = msg.substring((PREFIX_POSITIONS + " ").length());
-			System.out.println(crop);
-			listener.updatePositions(crop);
+			notifyPositionsUpdate(crop);
 		} else if (msg.startsWith(PREFIX_CONFIG)) {
 			String crop = msg.substring((PREFIX_CONFIG + " ").length());
 
@@ -120,5 +131,51 @@ public class ClientProtocol extends StringClientProtocol {
 
 	public void setListener(ClientListener listener) {
 		this.listener = listener;
+	}
+
+	private void notifyPositionsUpdate(String message) {
+		final String[] fields = message.split(" ");
+		final int playerAttributes = 6, fallenAttributes = 2;
+		final List<PlayerData> playersData = new ArrayList<>();
+		final List<Fallen> fallen = new ArrayList<>();
+
+		int position = 0;
+
+		for (; position < fields.length; position += playerAttributes) {
+			if (BattleServerProtocol.PREFIX_NUT.equals(fields[position])) {
+				break;
+			}
+			playersData.add(PlayerData.fromFields(fields, position));
+		}
+
+		fallen:
+		for (position++; position < fields.length; position += fallenAttributes) {
+
+			if (BattleServerProtocol.PREFIX_BOMB.equals(fields[position])) {
+				for (position++; position < fields.length; position += fallenAttributes) {
+
+					if (BattleServerProtocol.PREFIX_GLUE.equals(fields[position])) {
+						for (position++; position < fields.length; position += fallenAttributes) {
+							int x = Integer.parseInt(fields[position]);
+							int y = Integer.parseInt(fields[position + 1]);
+							fallen.add(new Glue(x, y));
+						}
+						break fallen;
+					}
+
+					int x = Integer.parseInt(fields[position]);
+					int y = Integer.parseInt(fields[position + 1]);
+					fallen.add(new Bomb(x, y));
+				}
+				break;
+			}
+
+			int x = Integer.parseInt(fields[position]);
+			int y = Integer.parseInt(fields[position + 1]);
+			fallen.add(new Nut(x, y));
+		}
+
+		listener.updatePlayers(playersData);
+		listener.updateFallen(fallen);
 	}
 }
