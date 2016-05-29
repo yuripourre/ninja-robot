@@ -8,9 +8,9 @@ import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.game.GameMode;
-import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.model.GameState;
-import br.com.nrobot.network.server.NRobotServer;
+import br.com.nrobot.network.server.Server;
 import br.com.nrobot.network.server.model.NetworkRole;
 import br.com.nrobot.ui.NRButton;
 
@@ -63,10 +63,10 @@ public class RoomMenu extends Application {
 			if (createButton.isOnMouse()) {
 				LoungeMenu game = new LoungeMenu(w, h);
 
-				NRobotServer server = new NRobotServer(mode);
+				Server server = new Server(mode);
 				server.start();
 
-				NinjaRobotClient client = NinjaRobotClient.create(mode, game, "127.0.0.1");
+				Client client = Client.create(mode, game, "127.0.0.1");
 				client.setRole(NetworkRole.SERVER);
 
 				session.put(MainMenu.PARAM_CLIENT, client);
@@ -79,7 +79,7 @@ public class RoomMenu extends Application {
 				String ip = config.getServerIp();
 
 				LoungeMenu game = new LoungeMenu(w, h);
-				NinjaRobotClient client = NinjaRobotClient.create(mode, game, ip);
+				Client client = Client.create(mode, game, ip);
 				session.put(MainMenu.PARAM_CLIENT, client);
 				session.put(MainMenu.PARAM_GAME, new GameState());
 				nextApplication = game;

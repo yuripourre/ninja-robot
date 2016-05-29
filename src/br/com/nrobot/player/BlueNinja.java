@@ -4,59 +4,59 @@ import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.AnimatedLayer;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.etyllica.layer.StaticLayer;
-import br.com.nrobot.network.client.NRobotClientProtocol;
+import br.com.nrobot.network.client.ClientProtocol;
 
 
 public class BlueNinja extends Player {
 
 	StaticLayer right;
 	StaticLayer left;
-	
+
 	AnimatedLayer layer;
-		
+
 	public BlueNinja(int x, int y) {
 		super(x, y);
-		
+
 		right = new StaticLayer("player/blue_ninja.png");
 		left = new StaticLayer("player/blue_ninja_left.png");
-		
+
 		layer = new AnimatedLayer(x, y, 64, 64);
 		layer.cloneLayer(right);
 		layer.setFrames(1);
 		layer.setSpeed(100);
-		
-		hitbox = new GeometricLayer(x, y, layer.getTileW()-16*2, layer.getTileH()-30); 
+
+		hitbox = new GeometricLayer(x, y, layer.getTileW()-16*2, layer.getTileH()-30);
 	}
-	
-	public void changeSprite() {		
-		if(NRobotClientProtocol.SPRITE_BLUE.equals(sprite)) {
+
+	public void changeSprite() {
+		if(ClientProtocol.SPRITE_BLUE.equals(sprite)) {
 			right = new StaticLayer("player/blue_ninja.png");
-			left = new StaticLayer("player/blue_ninja_left.png");	
+			left = new StaticLayer("player/blue_ninja_left.png");
 		} else {
 			right = new StaticLayer("player/dark_ninja.png");
 			left = new StaticLayer("player/dark_ninja_left.png");
 		}
-		
+
 		layer.cloneLayer(right);
 	}
-	
+
 	@Override
 	public void draw(Graphics g) {
 		layer.draw(g);
 	}
-	
+
 	public void setPosition(int x, int y) {
 		layer.setCoordinates(x, y);
 	}
-	
+
 	public void turnRight() {
 		layer.cloneLayer(right);
 	}
-	
+
 	public void turnLeft() {
 		layer.cloneLayer(left);
 	}
-	
+
 	public void die() {
 		layer.setFrames(1);
 		layer.setNeedleX(layer.getTileW()*3);
@@ -72,7 +72,7 @@ public class BlueNinja extends Player {
 		layer.setNeedleY(0);
 		layer.resetAnimation();
 	}
-	
+
 	@Override
 	public void walk() {
 		layer.setFrames(6);

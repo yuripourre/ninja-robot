@@ -9,26 +9,26 @@ import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.game.GameMode;
-import br.com.nrobot.network.client.NRobotClientListener;
-import br.com.nrobot.network.client.NRobotClientProtocol;
-import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.client.ClientListener;
+import br.com.nrobot.network.client.ClientProtocol;
+import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.model.GameState;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
 import br.com.nrobot.ui.SelectionButton;
 
-public class LoungeMenu extends Application implements NRobotClientListener {
+public class LoungeMenu extends Application implements ClientListener {
 
 	private String me = "0";
 
-	private NinjaRobotClient client;
+	private Client client;
 	private ImageLayer background;
 
 	private ImageLayer slot;
 	private ImageLayer blueNinja;
 	private ImageLayer darkNinja;
-	
+
 	private SelectionButton blueNinjaButton;
 	private SelectionButton darkNinjaButton;
 
@@ -44,8 +44,8 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 
 		mode = (GameMode) session.get(MainMenu.PARAM_MODE);
 		state = (GameState) session.get(MainMenu.PARAM_GAME);
-		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
-		
+		client = (Client) session.get(MainMenu.PARAM_CLIENT);
+
 		loadingInfo = "Carregando Imagens";
 
 		background = new ImageLayer("background.png");
@@ -57,7 +57,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 
 		blueNinjaButton = new SelectionButton(40, 370, "player/blue_ninja.png");
 		darkNinjaButton = new SelectionButton(40+160, 370, "player/dark_ninja.png");
-		
+
 		loading = 100;
 	}
 
@@ -67,13 +67,13 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 			client.getProtocol().sendStart();
 		}
 	}
-	
+
 	@Override
 	public void updateMouse(PointerEvent event) {
 		if(blueNinjaButton.updateMouse(event)) {
-			client.getProtocol().sendSprite(NRobotClientProtocol.SPRITE_BLUE);
+			client.getProtocol().sendSprite(ClientProtocol.SPRITE_BLUE);
 		} else if(darkNinjaButton.updateMouse(event)) {
-			client.getProtocol().sendSprite(NRobotClientProtocol.SPRITE_DARK);
+			client.getProtocol().sendSprite(ClientProtocol.SPRITE_DARK);
 		}
 	}
 
@@ -128,7 +128,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 			player.changeSprite();
 		}
 	}
-	
+
 
 	@Override
 	public void updateReady(String id) {
@@ -144,7 +144,7 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 	@Override
 	public void draw(Graphics g) {
 		background.draw(g);
-		
+
 		blueNinjaButton.draw(g);
 		darkNinjaButton.draw(g);
 
@@ -159,12 +159,12 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 			slot.simpleDraw(g, cx+160*i, cy);
 			g.drawString(player.getName(), cx+padding+offset*i, cy+padding+6);
 
-			if(NRobotClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
-				blueNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);	
-			} else if(NRobotClientProtocol.SPRITE_DARK.equals(player.getSprite())) {
+			if(ClientProtocol.SPRITE_BLUE.equals(player.getSprite())) {
+				blueNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
+			} else if(ClientProtocol.SPRITE_DARK.equals(player.getSprite())) {
 				darkNinja.simpleDraw(g, cx+padding+10+160*i, cy+padding+20);
 			}
-			
+
 			if(ServerPlayer.STATE_READY.equals(player.getState())) {
 				String text = "READY";
 				g.drawString(text, cx+padding+offset*i, cy+padding+120);
@@ -185,17 +185,17 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 
 	@Override
 	public void startGame() {
-		
+
 		Game game;
-		
+
 		if(GameMode.BATTLE == mode) {
 			game = new BattleModeGame(w, h, state);
 		} else {
 			game = new StoryModeGame(w, h, state);
 		}
-		
-		client.setListener(game);		
+
+		client.setListener(game);
 		nextApplication = game;
 	}
-	
+
 }

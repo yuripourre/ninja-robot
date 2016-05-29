@@ -12,27 +12,24 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.fallen.Glue;
-import br.com.nrobot.fallen.Nut;
-import br.com.nrobot.network.client.NRobotClientListener;
+import br.com.nrobot.network.client.ClientListener;
 import br.com.nrobot.network.client.model.GameState;
-import br.com.nrobot.network.server.NRobotBattleServerProtocol;
+import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.NetworkRole;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 import br.com.nrobot.player.ServerPlayer;
 
-public class StoryModeGame extends Game implements OnAnimationFinishListener, UpdateIntervalListener, NRobotClientListener {
+public class StoryModeGame extends Game implements OnAnimationFinishListener, UpdateIntervalListener, ClientListener {
 
 	private ImageLayer background;
-	
+
 	private boolean gameIsOver = false;
 
 	private Set<Fallen> pieces = new HashSet<Fallen>();
-	
+
 	public boolean isDrawing = false;
 
 	public StoryModeGame(int w, int h, GameState state) {
@@ -42,7 +39,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 	@Override
 	public void load() {
 		super.load();
-		
+
 		loadingInfo = "Loading background";
 
 		background = new ImageLayer("background/forest.png");
@@ -52,7 +49,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		loadingInfo = "Carregando Jogador";
 
 		loading = 100;
-		
+
 		updateAtFixedRate(50, this);
 	}
 
@@ -62,12 +59,12 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		for(Entry<String, Player> entry : state.players.entrySet()) {
 			Player player = entry.getValue();
 			player.updatePlayer(now);
-			if (me.equals(entry.getKey())) {				
-				background.setX(-player.getX());	
+			if (me.equals(entry.getKey())) {
+				background.setX(-player.getX());
 			}
 		}
 	}
-		
+
 	@Override
 	public void draw(Graphics g) {
 
@@ -79,10 +76,10 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		for(Player player : state.players.values()) {
 			g.drawShadow(60+120*i, 60, "Pts: "+Integer.toString(player.getPoints()));
 			g.drawShadow(60+120*i, 90, "Item: "+player.getItem());
-			
+
 			player.draw(g);
 			g.drawShadow(player.getX(), player.getY()-20, player.getName());
-			
+
 			drawPlayerModifier(g, player);
 
 			i++;
@@ -115,7 +112,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		} else if(ServerPlayer.STATE_DEAD.equals(player.getState())) {
 			skull.simpleDraw(g, player.getX(), player.getY());
 		}
-		
+
 		if(ServerPlayer.ITEM_RESSURRECT.equals(player.getItem())) {
 			skull.simpleDraw(g, player.getX(), player.getY());
 		}
@@ -123,17 +120,17 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 
 	@Override
 	public void updateKeyboard(KeyEvent event) {
-		
+
 		if(NetworkRole.SERVER == client.getRole()) {
 			if(event.isKeyDown(KeyEvent.VK_ENTER)) {
 				client.getProtocol().sendRessurrect();
 			}
 		}
-		
+
 		if (client != null) {
 			client.handleEvent(event);
 		}
-		
+
 		if(event.isKeyDown(KeyEvent.VK_ESC)) {
 			nextApplication = new MainMenu(w, h);
 		}
@@ -157,7 +154,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 
 		gameIsOver = true;
 
-		int points = state.players.get(me).getPoints(); 
+		int points = state.players.get(me).getPoints();
 
 		if(points > 0) {
 			if(points == 1) {
@@ -199,16 +196,16 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 	}
 
 	private void addPlayer(String id, String name) {
-		if(id.startsWith(NRobotBattleServerProtocol.PREFIX_BOT)) {
+		if(id.startsWith(BattleServerProtocol.PREFIX_BOT)) {
 			RobotNinja player = new RobotNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);	
+			state.players.put(id, player);
 		} else {
 			BlueNinja player = new BlueNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);	
+			state.players.put(id, player);
 		}
-		
+
 	}
 
 	/**
@@ -218,7 +215,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 	public void updatePositions(String positions) {
 		if (!stateReady)
 			return;
-		
+
 		//System.out.println(positions);
 		String[] values = positions.split(" ");
 
@@ -227,7 +224,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		for (int i = 0;i < values.length; i += attributes) {
 			String id = values[i];
 
-			if(NRobotBattleServerProtocol.PREFIX_NUT.equals(id)) {
+			if(BattleServerProtocol.PREFIX_NUT.equals(id)) {
 				break;
 			}
 

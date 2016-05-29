@@ -6,20 +6,20 @@ import br.com.etyllica.core.context.UpdateIntervalListener;
 import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
-import br.com.nrobot.network.client.NRobotClientListener;
-import br.com.nrobot.network.client.NinjaRobotClient;
+import br.com.nrobot.network.client.ClientListener;
+import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.model.GameState;
-import br.com.nrobot.network.server.NRobotBattleServerProtocol;
+import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.NetworkRole;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
 
-public abstract class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, NRobotClientListener {
+public abstract class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, ClientListener {
 
 	protected String me = "0";
 
-	protected NinjaRobotClient client;
+	protected Client client;
 	protected boolean stateReady = false;
 
 	protected ImageLayer ice;
@@ -27,7 +27,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	protected ImageLayer gameOver;
 
 	protected GameState state;
-	
+
 	public Game(int w, int h, GameState state) {
 		super(w, h);
 		this.state = state;
@@ -35,9 +35,9 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void load() {
-		client = (NinjaRobotClient) session.get(MainMenu.PARAM_CLIENT);
+		client = (Client) session.get(MainMenu.PARAM_CLIENT);
 		stateReady = true;
-		
+
 		loadingInfo = "Carregando Imagens";
 		gameOver = new ImageLayer("gameover.png");
 		ice = new ImageLayer("state/ice.png");
@@ -56,17 +56,17 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void updateKeyboard(KeyEvent event) {
-		
+
 		if(NetworkRole.SERVER == client.getRole()) {
 			if(event.isKeyDown(KeyEvent.VK_ENTER)) {
 				client.getProtocol().sendRessurrect();
 			}
 		}
-		
+
 		if (client != null) {
 			client.handleEvent(event);
 		}
-		
+
 		if(event.isKeyDown(KeyEvent.VK_ESC)) {
 			nextApplication = new MainMenu(w, h);
 		}
@@ -98,18 +98,18 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	}
 
 	private void addPlayer(String id, String name) {
-		if(id.startsWith(NRobotBattleServerProtocol.PREFIX_BOT)) {
+		if(id.startsWith(BattleServerProtocol.PREFIX_BOT)) {
 			RobotNinja player = new RobotNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);	
+			state.players.put(id, player);
 		} else {
 			BlueNinja player = new BlueNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);	
+			state.players.put(id, player);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void updateName(String id, String name) {
 		Player player = state.players.get(id);
@@ -126,15 +126,15 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	public Config getConfig() {
 		return (Config) session.get(MainMenu.PARAM_CONFIG);
 	}
-	
+
 	@Override
 	public void startGame() {
-		
+
 	}
 
 	@Override
 	public void updateReady(String id) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
