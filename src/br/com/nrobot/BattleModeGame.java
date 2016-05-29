@@ -200,10 +200,6 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 
 	private void updateGlues(int index, String[] values, Set<Fallen> updatedPieces) {
 		for (int i = index; i < values.length; i += 2) {
-			if (BattleServerProtocol.PREFIX_TONIC.equals(values[i])) {
-				//updateTonics(i+1, values);
-				return;
-			}
 			int x = Integer.parseInt(values[i]);
 			int y = Integer.parseInt(values[i + 1]);
 			updatedPieces.add(new Glue(x, y));

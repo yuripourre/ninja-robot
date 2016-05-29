@@ -18,7 +18,6 @@ public class StoryServerProtocol extends ServerProtocol {
 	public static final String PREFIX_BOMB = "B";
 	public static final String PREFIX_NUT = "N";
 	public static final String PREFIX_GLUE = "G";
-	public static final String PREFIX_TONIC = "T";
 
 	private int bots = 0;
 	private AI ai = new DumbAI();
