@@ -33,9 +33,9 @@ public class ServerPlayer {
 	public int playerY = 520;
 
 	public int speed = 15;
-	public int jumpSpeed = 10;
+	public int jumpSpeed = 25;
 
-	public int jumpDelay = 600;
+	public int jumpDelay = 700;
 	public int freezeDelay = 2500;
 	public int points = 0;
 	public String id = "";
