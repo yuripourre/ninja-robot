@@ -67,16 +67,16 @@ public class LoungeMenu extends Application implements ClientListener {
 	@Override
 	public void updateKeyboard(KeyEvent event) {
 		if (event.isKeyDown(KeyEvent.VK_ENTER)) {
-			client.getProtocol().sendStart();
+			client.start();
 		}
 	}
 
 	@Override
 	public void updateMouse(PointerEvent event) {
 		if (blueNinjaButton.updateMouse(event)) {
-			client.getProtocol().sendSprite(ClientProtocol.SPRITE_BLUE);
+			client.useBlueSprite();
 		} else if (darkNinjaButton.updateMouse(event)) {
-			client.getProtocol().sendSprite(ClientProtocol.SPRITE_DARK);
+			client.useDarkSprite();
 		}
 	}
 

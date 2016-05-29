@@ -21,14 +21,25 @@ public class Client extends TCPClient {
 
 	public Client(String ip, int port, ClientListener listener) {
 		super(ip, port, true);
-
 		protocol = new ClientProtocol(listener);
 		addProtocol(protocol);
 		start(CLIENT_DELAY);
 	}
 
-	public ClientProtocol getProtocol() {
-		return protocol;
+	public void useBlueSprite() {
+		protocol.sendSprite(ClientProtocol.SPRITE_BLUE);
+	}
+
+	public void useDarkSprite() {
+		protocol.sendSprite(ClientProtocol.SPRITE_DARK);
+	}
+
+	public void start() {
+		protocol.sendStart();
+	}
+
+	public void ressurrect() {
+		protocol.sendRessurrect();
 	}
 
 	public void setRole(NetworkRole role) {

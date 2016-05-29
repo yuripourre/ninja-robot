@@ -66,7 +66,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	public void updateKeyboard(KeyEvent event) {
 		if (NetworkRole.SERVER == client.getRole()) {
 			if (event.isKeyDown(KeyEvent.VK_ENTER)) {
-				client.getProtocol().sendRessurrect();
+				client.ressurrect();
 			}
 		}
 
