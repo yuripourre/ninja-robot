@@ -77,7 +77,7 @@ public class SinglePlayerGame extends Application implements OnAnimationFinishLi
 
 			pieces.add(leaf);
 		} else {
-			pieces.add(new Hive(x, -20, this));
+			pieces.add(new Hive(x, -20));
 		}
 
 	}

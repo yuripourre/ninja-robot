@@ -139,7 +139,7 @@ public class ClientProtocol extends StringClientProtocol {
 		int position = 0;
 
 		for (; position < fields.length; position += playerAttributes) {
-			if (BattleServerProtocol.PREFIX_NUT.equals(fields[position])) {
+			if (BattleServerProtocol.PREFIX_LEAF.equals(fields[position])) {
 				break;
 			}
 			playersData.add(PlayerData.fromFields(fields, position));
@@ -148,7 +148,7 @@ public class ClientProtocol extends StringClientProtocol {
 		fallen:
 		for (position++; position < fields.length; position += fallenAttributes) {
 
-			if (BattleServerProtocol.PREFIX_BOMB.equals(fields[position])) {
+			if (BattleServerProtocol.PREFIX_HIVE.equals(fields[position])) {
 				for (position++; position < fields.length; position += fallenAttributes) {
 
 					if (BattleServerProtocol.PREFIX_GLUE.equals(fields[position])) {

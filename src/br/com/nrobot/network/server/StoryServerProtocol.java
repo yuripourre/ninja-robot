@@ -28,8 +28,8 @@ public class StoryServerProtocol extends ServerProtocol {
 
 	private List<Fallen> pieces = new ArrayList<Fallen>();
 
-	public StoryServerProtocol(String prefix) {
-		super(prefix);
+	public StoryServerProtocol() {
+		super();
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class StoryServerProtocol extends ServerProtocol {
 	}
 
 	private void addBot(String botId, String name) {
-		Bot player = new Bot(botId);
+		Bot player = new Bot(botId, ai);
 		player.name = name;
 
 		players.put(botId, player);

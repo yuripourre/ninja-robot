@@ -19,16 +19,14 @@ public class Server extends TCPServer {
 
 		if(GameMode.BATTLE == mode) {
 			this.port = Client.BATTLE_PORT;
-			listener = new BattleServerProtocol(ClientProtocol.PREFIX_NINJA_ROBOT);
+			listener = new BattleServerProtocol();
 		} else {
 			this.port = Client.STORY_PORT;
-			listener = new StoryServerProtocol(ClientProtocol.PREFIX_NINJA_ROBOT);
+			listener = new StoryServerProtocol();
 		}
 
 		openPort(this.port);
-
 		handshaker = new Handshaker(listener.getPlayers());
-
 		addProtocol(ClientProtocol.PREFIX_NINJA_ROBOT, listener);
 	}
 
@@ -57,5 +55,4 @@ public class Server extends TCPServer {
 
 		listener.removePeer(peer);
 	}
-
 }

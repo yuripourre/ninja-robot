@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import br.com.midnight.protocol.common.StringServerProtocol;
+import br.com.nrobot.network.client.Client;
+import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.player.ServerPlayer;
 
 public abstract class ServerProtocol extends StringServerProtocol {
@@ -13,9 +15,8 @@ public abstract class ServerProtocol extends StringServerProtocol {
 
 	protected Map<String, ServerPlayer> players = new LinkedHashMap<String, ServerPlayer>();
 
-	public ServerProtocol(String prefix) {
-		super(prefix);
-		// TODO Auto-generated constructor stub
+	public ServerProtocol() {
+		super(ClientProtocol.PREFIX_NINJA_ROBOT);
 	}
 
 	public abstract void update(long now);
@@ -23,5 +24,4 @@ public abstract class ServerProtocol extends StringServerProtocol {
 	public Map<String, ServerPlayer>  getPlayers() {
 		return players;
 	}
-
 }
