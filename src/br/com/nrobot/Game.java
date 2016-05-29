@@ -48,17 +48,15 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void timeUpdate(long now) {
-
-		for(Player player : state.players.values()) {
+		for (Player player : state.players.values()) {
 			player.updatePlayer(now);
 		}
 	}
 
 	@Override
 	public void updateKeyboard(KeyEvent event) {
-
-		if(NetworkRole.SERVER == client.getRole()) {
-			if(event.isKeyDown(KeyEvent.VK_ENTER)) {
+		if (NetworkRole.SERVER == client.getRole()) {
+			if (event.isKeyDown(KeyEvent.VK_ENTER)) {
 				client.getProtocol().sendRessurrect();
 			}
 		}
@@ -67,7 +65,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 			client.handleEvent(event);
 		}
 
-		if(event.isKeyDown(KeyEvent.VK_ESC)) {
+		if (event.isKeyDown(KeyEvent.VK_ESC)) {
 			nextApplication = new MainMenu(w, h);
 		}
 	}
@@ -84,21 +82,19 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void receiveMessage(String id, String message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void init(String[] ids) {
 		me = ids[0];
 
-		for(int i = 1; i < ids.length; i+=2) {
-			addPlayer(ids[i], ids[i+1]);
+		for (int i = 1; i < ids.length; i += 2) {
+			addPlayer(ids[i], ids[i + 1]);
 		}
 	}
 
 	private void addPlayer(String id, String name) {
-		if(id.startsWith(BattleServerProtocol.PREFIX_BOT)) {
+		if (id.startsWith(BattleServerProtocol.PREFIX_BOT)) {
 			RobotNinja player = new RobotNinja(0, 540);
 			player.setName(name);
 			state.players.put(id, player);
@@ -107,19 +103,16 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 			player.setName(name);
 			state.players.put(id, player);
 		}
-
 	}
 
 	@Override
 	public void updateName(String id, String name) {
-		Player player = state.players.get(id);
-		player.setName(name);
+		state.players.get(id).setName(name);
 	}
 
 	@Override
 	public void updateSprite(String id, String sprite) {
-		Player player = state.players.get(id);
-		//player.setSprite(sprite);
+		//state.players.get(id).setSprite(sprite);
 	}
 
 	@Override
@@ -129,12 +122,9 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void startGame() {
-
 	}
 
 	@Override
 	public void updateReady(String id) {
-		// TODO Auto-generated method stub
-
 	}
 }
