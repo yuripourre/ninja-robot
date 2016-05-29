@@ -25,7 +25,6 @@ public class ServerPlayer {
 
 	public static final String ITEM_NONE = "N";
 	public static final String ITEM_GLUE = "Glue";
-	public static final String ITEM_TONIC = "Tonic";
 	public static final String ITEM_RESSURRECT = "Dead";
 
 	public int x = 0;
