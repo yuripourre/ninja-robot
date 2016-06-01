@@ -17,7 +17,7 @@ public abstract class Player {
 	
 	protected boolean turnRight = false;
 	
-	protected int speed = 10;
+	protected int speed = 20;
 	
 	protected GeometricLayer hitbox;
 	
@@ -153,5 +153,9 @@ public abstract class Player {
 
 	public abstract int getX();
 	public abstract int getY();
+	public abstract void setX(int x);
+	public abstract void setY(int y);
+	
+	public abstract void draw(Graphics g, int x);
 			
 }

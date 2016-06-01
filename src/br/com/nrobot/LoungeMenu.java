@@ -143,6 +143,9 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 
 	@Override
 	public void draw(Graphics g) {
+		if (loading!=100) {
+			return;
+		}		
 		background.draw(g);
 		
 		blueNinjaButton.draw(g);
@@ -191,7 +194,8 @@ public class LoungeMenu extends Application implements NRobotClientListener {
 		if(GameMode.BATTLE == mode) {
 			game = new BattleModeGame(w, h, state);
 		} else {
-			game = new StoryModeGame(w, h, state);
+			//game = new StoryModeGame(w, h, state);
+			game = new PresentationModeGame(w, h, state);
 		}
 		
 		client.setListener(game);		

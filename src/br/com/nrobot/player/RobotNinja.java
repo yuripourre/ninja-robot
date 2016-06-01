@@ -49,6 +49,11 @@ public class RobotNinja extends Player {
 		layer.draw(g);
 	}
 	
+	@Override
+	public void draw(Graphics g, int x) {
+		layer.simpleDraw(g, x, layer.getY());
+	}
+	
 	public void setPosition(int x, int y) {
 		layer.setCoordinates(x, y);
 		updateHitbox();
@@ -83,13 +88,23 @@ public class RobotNinja extends Player {
 	@Override
 	public int getX() {
 		return layer.getX();
+	}	
+
+	@Override
+	public void setX(int x) {
+		layer.setX(x);
 	}
 	
 	@Override
 	public int getY() {
 		return layer.getY();
 	}
-
+	
+	@Override
+	public void setY(int y) {
+		layer.setY(y);
+	}
+	
 	@Override
 	public void jumpUp() {
 		// TODO Auto-generated method stub

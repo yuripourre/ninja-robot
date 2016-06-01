@@ -8,8 +8,8 @@ import br.com.nrobot.player.ServerPlayer;
 
 public abstract class NRobotServerProtocol extends StringServerProtocol {
 
-	public static final int WIDTH = 800;
-	public static final int HEIGHT = 600;
+	public static int WIDTH = 800;
+	public static int HEIGHT = 600;
 	
 	protected Map<String, ServerPlayer> players = new LinkedHashMap<String, ServerPlayer>();
 	

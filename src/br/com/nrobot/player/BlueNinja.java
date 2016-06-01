@@ -94,11 +94,26 @@ public class BlueNinja extends Player {
 	@Override
 	public int getX() {
 		return layer.getX();
-	}
+	}	
 
+	@Override
+	public void setX(int x) {
+		layer.setX(x);
+	}
+	
 	@Override
 	public int getY() {
 		return layer.getY();
+	}
+	
+	@Override
+	public void setY(int y) {
+		layer.setY(y);
+	}
+	
+	@Override
+	public void draw(Graphics g, int x) {
+		layer.simpleDraw(g, x, layer.getY());
 	}
 
 	@Override
