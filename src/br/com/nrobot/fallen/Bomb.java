@@ -24,7 +24,7 @@ public class Bomb extends Fallen {
 
 	@Override
 	public void update(long now) {
-		super.update(now);
+		//super.update(now);
 		explosion.animate(now);
 	}
 
@@ -36,9 +36,13 @@ public class Bomb extends Fallen {
 
 		if (player.colide(this)) {
 			markForRemoval();
-			explosion.explode(this);
+			explode();
 			player.setDead(true);
 		}
+	}
+	
+	public void explode() {
+		explosion.explode(this);
 	}
 
 	@Override
