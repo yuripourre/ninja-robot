@@ -64,6 +64,8 @@ public class BlueNinja extends Player {
 		layer.resetAnimation();
 		layer.setY(540);
 	}
+	
+	public void ressurrect() {}
 
 	@Override
 	public void stand() {

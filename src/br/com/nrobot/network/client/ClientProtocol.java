@@ -3,6 +3,7 @@ package br.com.nrobot.network.client;
 import br.com.midnight.model.Peer;
 import br.com.midnight.protocol.common.StringClientProtocol;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.event.EventType;
 import br.com.nrobot.fallen.*;
 import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.server.BattleServerProtocol;
@@ -18,9 +19,9 @@ public class ClientProtocol extends StringClientProtocol {
 	public static final String PREFIX_CONFIG = "f";
 	public static final String PREFIX_POSITIONS = "p";
 	public static final String PREFIX_MESSAGE = "m";
-	public static final String PREFIX_CHEAT_CODE = "d";
+	public static final String PREFIX_EVENT = "E";
 
-	public static final String CHEAT_RESSURRECT = "ress";
+	public static final String EVENT_RESSURRECT = EventType.RESSURRECT.code;
 
 	public static final String STATE_PRESS = "h";
 	public static final String STATE_RELEASE = "r";
@@ -70,9 +71,9 @@ public class ClientProtocol extends StringClientProtocol {
 	}
 
 	public void sendRessurrect() {
-		sendTCP(PREFIX_CHEAT_CODE + " " + CHEAT_RESSURRECT);
+		sendTCP(PREFIX_EVENT + " " + EVENT_RESSURRECT);
 	}
-
+	
 	@Override
 	public void receiveTCP(Peer peer, String msg) {
 
@@ -112,6 +113,10 @@ public class ClientProtocol extends StringClientProtocol {
 				listener.startGame();
 			}
 
+		} else if (msg.startsWith(PREFIX_EVENT)) {
+			String event = msg.substring((PREFIX_EVENT + " ").length());
+			listener.updateEvent(EventType.valueOfCode(event));
+			
 		} else if (msg.startsWith(PREFIX_MESSAGE)) {
 			String id = msg.split(" ")[0];
 			String message = msg.substring((PREFIX_MESSAGE + " ").length());

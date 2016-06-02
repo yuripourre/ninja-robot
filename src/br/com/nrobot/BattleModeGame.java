@@ -5,7 +5,7 @@ import br.com.etyllica.core.animation.script.OpacityAnimation;
 import br.com.etyllica.core.context.UpdateIntervalListener;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.network.client.model.GameState;
+import br.com.nrobot.network.client.model.ClientGameState;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
 
@@ -15,7 +15,7 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 	private String gameOverMessage = "Voce nao fez nenhum ponto.";
 	public boolean isDrawing = false;
 
-	public BattleModeGame(int w, int h, GameState state) {
+	public BattleModeGame(int w, int h, ClientGameState state) {
 		super(w, h, state);
 	}
 
@@ -43,7 +43,7 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 		g.setFont(g.getFont().deriveFont(28f));
 
 		int i = 0;
-		for (Player player : state.players.values()) {
+		for (Player player : state.getPlayers().values()) {
 			g.drawShadow(60 + 120 * i, 60, "Pts: " + Integer.toString(player.getPoints()));
 			g.drawShadow(60 + 120 * i, 90, "Item: " + player.getItem());
 
@@ -91,7 +91,7 @@ public class BattleModeGame extends Game implements OnAnimationFinishListener, U
 	public void onAnimationFinish(long now) {
 		gameIsOver = true;
 
-		int points = state.players.get(me).getPoints();
+		int points = state.getPlayers().get(me).getPoints();
 
 		if (points > 0) {
 			if (points == 1) {

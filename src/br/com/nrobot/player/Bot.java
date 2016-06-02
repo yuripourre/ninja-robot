@@ -2,6 +2,7 @@ package br.com.nrobot.player;
 
 import br.com.nrobot.network.server.ai.AI;
 import br.com.nrobot.network.server.model.PlayerRole;
+import br.com.nrobot.network.server.model.ServerGameState;
 
 public class Bot extends ServerPlayer {
 
@@ -17,8 +18,8 @@ public class Bot extends ServerPlayer {
 	}
 
 	@Override
-	public void update(long now) {
-		ai.act(this);
-		super.update(now);
+	public void update(ServerGameState gameState) {
+		ai.act(this, gameState);
+		super.update(gameState);
 	}
 }

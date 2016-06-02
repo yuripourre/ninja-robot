@@ -1,5 +1,8 @@
 package br.com.nrobot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.context.Application;
 import br.com.etyllica.core.context.UpdateIntervalListener;
@@ -8,19 +11,18 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.event.EventType;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.PlayerData;
 import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.ClientListener;
-import br.com.nrobot.network.client.model.GameState;
+import br.com.nrobot.network.client.model.ClientGameState;
 import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.NetworkRole;
+import br.com.nrobot.network.server.model.ServerGameState;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.RobotNinja;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Game extends Application implements OnAnimationFinishListener, UpdateIntervalListener, ClientListener {
 
@@ -34,10 +36,10 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 	protected ImageLayer skull;
 	protected ImageLayer gameOver;
 
-	protected GameState state;
+	protected ClientGameState state;
 	protected List<Fallen> fallen = new ArrayList<>();
 
-	public Game(int w, int h, GameState state) {
+	public Game(int w, int h, ClientGameState state) {
 		super(w, h);
 		this.state = state;
 	}
@@ -57,7 +59,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void timeUpdate(long now) {
-		for (Player player : state.players.values()) {
+		for (Player player : state.getPlayers().values()) {
 			player.updatePlayer(now);
 		}
 	}
@@ -90,7 +92,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void exitClient(String id) {
-		state.players.remove(id);
+		state.getPlayers().remove(id);
 	}
 
 	@Override
@@ -115,11 +117,11 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 		if (id.startsWith(BattleServerProtocol.PREFIX_BOT)) {
 			RobotNinja player = new RobotNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);
+			state.getPlayers().put(id, player);
 		} else {
 			BlueNinja player = new BlueNinja(0, 540);
 			player.setName(name);
-			state.players.put(id, player);
+			state.getPlayers().put(id, player);
 		}
 	}
 
@@ -129,7 +131,7 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 			return;
 		}
 		for (PlayerData data : playersData) {
-			Player player = state.players.get(data.id);
+			Player player = state.getPlayers().get(data.id);
 			if (player == null) {
 				continue;
 			}
@@ -147,12 +149,23 @@ public abstract class Game extends Application implements OnAnimationFinishListe
 
 	@Override
 	public void updateName(String id, String name) {
-		state.players.get(id).setName(name);
+		state.getPlayers().get(id).setName(name);
 	}
 
 	@Override
 	public void updateSprite(String id, String sprite) {
 		//state.players.get(id).setSprite(sprite);
+	}
+	
+	@Override
+	public void updateEvent(EventType event) {
+		//state.players.get(id).setSprite(sprite);
+		if (event == EventType.RESSURRECT) {
+			for (Player player:state.getPlayers().values()) {
+				player.ressurrect();	
+			}
+			
+		}
 	}
 
 	@Override

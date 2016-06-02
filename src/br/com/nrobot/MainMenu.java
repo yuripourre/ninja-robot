@@ -7,6 +7,7 @@ import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.config.ConfigLoader;
+import br.com.nrobot.fallen.Bomb;
 import br.com.nrobot.ui.NRButton;
 
 public class MainMenu extends Application {
@@ -17,7 +18,7 @@ public class MainMenu extends Application {
 	
 	private NRButton playButton;
 	private NRButton creditsButton;
-	
+		
 	public static final String PARAM_CONFIG = "config";
 	public static final String PARAM_CLIENT = "client";
 	public static final String PARAM_GAME = "game";
@@ -47,10 +48,10 @@ public class MainMenu extends Application {
 		
 		Config config = ConfigLoader.loadConfiguration();
 		session.put(PARAM_CONFIG, config);
-		
+				
 		loading = 100;
 	}
-	
+		
 	@Override
 	public void draw(Graphics g) {
 		//Fix in etyllica
@@ -79,7 +80,8 @@ public class MainMenu extends Application {
 			if(creditsButton.isOnMouse()) {
 				nextApplication = new Credits(w, h);
 			}
-			
+	
+
 		}
 	}
 

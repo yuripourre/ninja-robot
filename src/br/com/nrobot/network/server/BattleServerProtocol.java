@@ -1,14 +1,20 @@
 package br.com.nrobot.network.server;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import br.com.midnight.model.Peer;
-import br.com.nrobot.fallen.*;
+import br.com.nrobot.fallen.Fallen;
+import br.com.nrobot.fallen.FallenType;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.server.ai.AI;
 import br.com.nrobot.network.server.ai.DumbAI;
+import br.com.nrobot.network.server.model.ServerGameState;
 import br.com.nrobot.player.Bot;
 import br.com.nrobot.player.ServerPlayer;
-
-import java.util.*;
 
 public class BattleServerProtocol extends ServerProtocol {
 
@@ -23,10 +29,14 @@ public class BattleServerProtocol extends ServerProtocol {
 	private final long delay = 400;
 	private boolean roomReady = false;
 
+	private ServerGameState gameState = new ServerGameState();
 	private List<Fallen> fallen = new ArrayList<>();
 
 	public BattleServerProtocol() {
 		super();
+		
+		gameState.setFallen(fallen);
+		gameState.setPlayers(players);
 	}
 
 	@Override
@@ -69,14 +79,16 @@ public class BattleServerProtocol extends ServerProtocol {
 
 			updateConfig(peer, msg);
 
-		} else if (msg.startsWith(ClientProtocol.PREFIX_CHEAT_CODE)) {
+		} else if (msg.startsWith(ClientProtocol.PREFIX_EVENT)) {
 
 			String command = msg.split(" ")[1];
 
-			if (ClientProtocol.CHEAT_RESSURRECT.equals(command)) {
+			if (ClientProtocol.EVENT_RESSURRECT.equals(command)) {
 				for (ServerPlayer player : players.values()) {
 					player.ressurrect();
 				}
+				
+				sendTCPtoAll(ClientProtocol.PREFIX_EVENT + " " + command);
 			}
 
 		} else {
@@ -136,7 +148,7 @@ public class BattleServerProtocol extends ServerProtocol {
 		String message = ClientProtocol.PREFIX_POSITIONS + " ";
 
 		for (ServerPlayer player : players.values()) {
-			player.update(now);
+			player.update(gameState);
 			message += player.asText() + " ";
 		}
 
@@ -154,6 +166,7 @@ public class BattleServerProtocol extends ServerProtocol {
 			return;
 		}
 
+		gameState.setNow(now);
 		updatePlayers(now);
 		updateFallen(now);
 
@@ -167,8 +180,8 @@ public class BattleServerProtocol extends ServerProtocol {
 		final Map<FallenType, Integer> probabilities = new HashMap<>();
 		probabilities.put(FallenType.LEAF, 40); // 40%
 		probabilities.put(FallenType.HIVE, 20); // 20%
-		probabilities.put(FallenType.BOMB, 2);  // etc
-		probabilities.put(FallenType.GLUE, 1);
+		probabilities.put(FallenType.BOMB, 2);  // 2%
+		probabilities.put(FallenType.GLUE, 1);  // 1%
 
 		final int x = random.nextInt(WIDTH), y = -20;
 		final int value = random.nextInt(100);

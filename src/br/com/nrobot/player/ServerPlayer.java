@@ -7,6 +7,7 @@ import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.GamePad;
 import br.com.nrobot.network.server.model.PlayerRole;
+import br.com.nrobot.network.server.model.ServerGameState;
 
 public class ServerPlayer {
 
@@ -37,12 +38,12 @@ public class ServerPlayer {
 
 	public int jumpDelay = 700;
 	public int freezeDelay = 2500;
+	
 	public int points = 0;
 	public String id = "";
 	public String name = "Robot";
 	public String state = STATE_STAND;
 	public String sprite = "robot.png";
-
 	public String item = ITEM_NONE;
 
 	public PlayerRole role = PlayerRole.HUMAN;
@@ -112,9 +113,11 @@ public class ServerPlayer {
 		item = ITEM_NONE;
 	}
 
-	public void update(long now) {
+	public void update(ServerGameState gameState) {
 		if(dead)
 			return;
+		
+		long now = gameState.getNow();
 
 		if(STATE_FREEZE.equals(state)) {
 			if(when + freezeDelay > now)

@@ -1,6 +1,7 @@
 package br.com.nrobot.network.client;
 
 import br.com.nrobot.config.Config;
+import br.com.nrobot.event.EventType;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.PlayerData;
 
@@ -17,5 +18,7 @@ public interface ClientListener {
 	void updateName(String id, String name);
 	void updateSprite(String id, String sprite);
 	void updateReady(String id);
+	void updateEvent(EventType event);
 	Config getConfig();
+	
 }

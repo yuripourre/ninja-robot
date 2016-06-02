@@ -70,6 +70,10 @@ public class RobotNinja extends Player {
 		layer.setVisible(false);
 	}
 	
+	public void ressurrect() {
+		layer.setVisible(true);
+	}
+	
 	public void walk() {
 		
 	}

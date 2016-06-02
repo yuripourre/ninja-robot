@@ -8,7 +8,7 @@ import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.network.server.ai.AI;
 import br.com.nrobot.network.server.ai.DumbAI;
-import br.com.nrobot.network.server.model.PlayerRole;
+import br.com.nrobot.network.server.model.ServerGameState;
 import br.com.nrobot.player.Bot;
 import br.com.nrobot.player.ServerPlayer;
 
@@ -26,10 +26,14 @@ public class StoryServerProtocol extends ServerProtocol {
 	private final long delay = 400;
 	private boolean roomReady = false;
 
-	private List<Fallen> pieces = new ArrayList<Fallen>();
+	private ServerGameState gameState = new ServerGameState();
+	private List<Fallen> fallen = new ArrayList<Fallen>();
 
 	public StoryServerProtocol() {
 		super();
+		
+		gameState.setFallen(fallen);
+		gameState.setPlayers(players);
 	}
 
 	@Override
@@ -75,11 +79,11 @@ public class StoryServerProtocol extends ServerProtocol {
 
 			updateConfig(peer, msg);
 
-		} else if (msg.startsWith(ClientProtocol.PREFIX_CHEAT_CODE)) {
+		} else if (msg.startsWith(ClientProtocol.PREFIX_EVENT)) {
 
 			String command = msg.split(" ")[1];
 
-			if(ClientProtocol.CHEAT_RESSURRECT.equals(command)) {
+			if(ClientProtocol.EVENT_RESSURRECT.equals(command)) {
 				for (ServerPlayer player : players.values()) {
 					player.ressurrect();
 				}
@@ -142,18 +146,14 @@ public class StoryServerProtocol extends ServerProtocol {
 	public void updatePlayers(long now) {
 		String message = ClientProtocol.PREFIX_POSITIONS+" ";
 
-		for(ServerPlayer player: players.values()) {
-			if(PlayerRole.BOT == player.role) {
-				ai.act((Bot) player);
-			}
-
-			player.update(now);
-			message += player.asText()+" ";
+		for (ServerPlayer player : players.values()) {
+			player.update(gameState);
+			message += player.asText() + " ";
 		}
 
 		//Add bombs and fallen items
 		message += PREFIX_NUT+" ";
-		for(Fallen nut : pieces) {
+		for(Fallen nut : fallen) {
 			message += nut.asText()+" ";
 		}
 
@@ -165,8 +165,9 @@ public class StoryServerProtocol extends ServerProtocol {
 			return;
 		}
 
+		gameState.setNow(now);
 		updatePlayers(now);
-		updatePieceList(now, pieces);
+		updatePieceList(now, fallen);
 
 		if(now > lastCreation + delay) {
 			lastCreation = now;

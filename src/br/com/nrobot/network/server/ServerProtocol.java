@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import br.com.midnight.protocol.common.StringServerProtocol;
-import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.ClientProtocol;
 import br.com.nrobot.player.ServerPlayer;
 

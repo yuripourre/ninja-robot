@@ -9,7 +9,7 @@ import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
 import br.com.nrobot.game.GameMode;
 import br.com.nrobot.network.client.Client;
-import br.com.nrobot.network.client.model.GameState;
+import br.com.nrobot.network.client.model.ClientGameState;
 import br.com.nrobot.network.server.Server;
 import br.com.nrobot.network.server.model.NetworkRole;
 import br.com.nrobot.ui.NRButton;
@@ -61,6 +61,7 @@ public class RoomMenu extends Application {
 		if (event.isButtonDown(MouseButton.MOUSE_BUTTON_LEFT)) {
 
 			if (createButton.isOnMouse()) {
+				session.put(MainMenu.PARAM_GAME, new ClientGameState());
 				LoungeMenu game = new LoungeMenu(w, h);
 
 				Server server = new Server(mode);
@@ -69,8 +70,7 @@ public class RoomMenu extends Application {
 				Client client = Client.create(mode, game, "127.0.0.1");
 				client.setRole(NetworkRole.SERVER);
 
-				session.put(MainMenu.PARAM_CLIENT, client);
-				session.put(MainMenu.PARAM_GAME, new GameState());
+				session.put(MainMenu.PARAM_CLIENT, client);				
 				nextApplication = game;
 			}
 
@@ -78,10 +78,10 @@ public class RoomMenu extends Application {
 				Config config = (Config) session.get(MainMenu.PARAM_CONFIG);
 				String ip = config.getServerIp();
 
+				session.put(MainMenu.PARAM_GAME, new ClientGameState());
 				LoungeMenu game = new LoungeMenu(w, h);
 				Client client = Client.create(mode, game, ip);
 				session.put(MainMenu.PARAM_CLIENT, client);
-				session.put(MainMenu.PARAM_GAME, new GameState());
 				nextApplication = game;
 			}
 		}

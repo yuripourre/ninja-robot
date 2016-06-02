@@ -28,6 +28,7 @@ public abstract class Player {
 	public abstract void turnRight();
 	public abstract void turnLeft();
 	public abstract void die();
+	public abstract void ressurrect();
 	public abstract void stand();
 	public abstract void walk();
 	public abstract void attack();

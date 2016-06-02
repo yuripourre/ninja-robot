@@ -1,6 +1,7 @@
 package br.com.nrobot.network.server.ai;
 
 import br.com.nrobot.network.server.BattleServerProtocol;
+import br.com.nrobot.network.server.model.ServerGameState;
 import br.com.nrobot.player.Bot;
 
 public class DumbAI implements AI {
@@ -9,7 +10,7 @@ public class DumbAI implements AI {
 	private static final int BORDER = 20;
 
 	@Override
-	public void act(Bot player) {
+	public void act(Bot player, ServerGameState state) {
 
 		if (player.goingLeft) {
 			if (player.x > BORDER + player.speed) {

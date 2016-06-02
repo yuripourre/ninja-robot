@@ -1,15 +1,15 @@
 package br.com.nrobot;
 
+import java.util.Map.Entry;
+
 import br.com.etyllica.core.animation.OnAnimationFinishListener;
 import br.com.etyllica.core.animation.script.OpacityAnimation;
 import br.com.etyllica.core.context.UpdateIntervalListener;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.network.client.model.GameState;
+import br.com.nrobot.network.client.model.ClientGameState;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
-
-import java.util.Map.Entry;
 
 public class StoryModeGame extends Game implements OnAnimationFinishListener, UpdateIntervalListener {
 
@@ -18,7 +18,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 	private String gameOverMessage = "Voce nao fez nenhum ponto.";
 	private ImageLayer background;
 
-	public StoryModeGame(int w, int h, GameState state) {
+	public StoryModeGame(int w, int h, ClientGameState state) {
 		super(w, h, state);
 	}
 
@@ -41,7 +41,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 
 	@Override
 	public void timeUpdate(long now) {
-		for (Entry<String, Player> entry : state.players.entrySet()) {
+		for (Entry<String, Player> entry : state.getPlayers().entrySet()) {
 			Player player = entry.getValue();
 			player.updatePlayer(now);
 			if (me.equals(entry.getKey())) {
@@ -58,7 +58,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 		g.setFont(g.getFont().deriveFont(28f));
 
 		int i = 0;
-		for (Player player : state.players.values()) {
+		for (Player player : state.getPlayers().values()) {
 			g.drawShadow(60 + 120 * i, 60, "Pts: " + Integer.toString(player.getPoints()));
 			g.drawShadow(60 + 120 * i, 90, "Item: " + player.getItem());
 
@@ -108,7 +108,7 @@ public class StoryModeGame extends Game implements OnAnimationFinishListener, Up
 
 		gameIsOver = true;
 
-		int points = state.players.get(me).getPoints();
+		int points = state.getPlayers().get(me).getPoints();
 
 		if (points > 0) {
 			if (points == 1) {

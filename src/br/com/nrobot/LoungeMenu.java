@@ -9,13 +9,14 @@ import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
 import br.com.nrobot.config.Config;
+import br.com.nrobot.event.EventType;
 import br.com.nrobot.fallen.Fallen;
 import br.com.nrobot.game.GameMode;
 import br.com.nrobot.network.PlayerData;
+import br.com.nrobot.network.client.Client;
 import br.com.nrobot.network.client.ClientListener;
 import br.com.nrobot.network.client.ClientProtocol;
-import br.com.nrobot.network.client.Client;
-import br.com.nrobot.network.client.model.GameState;
+import br.com.nrobot.network.client.model.ClientGameState;
 import br.com.nrobot.player.BlueNinja;
 import br.com.nrobot.player.Player;
 import br.com.nrobot.player.ServerPlayer;
@@ -35,7 +36,7 @@ public class LoungeMenu extends Application implements ClientListener {
 	private SelectionButton blueNinjaButton;
 	private SelectionButton darkNinjaButton;
 
-	GameState state;
+	ClientGameState state;
 	GameMode mode;
 
 	public LoungeMenu(int w, int h) {
@@ -46,7 +47,7 @@ public class LoungeMenu extends Application implements ClientListener {
 	public void load() {
 
 		mode = (GameMode) session.get(MainMenu.PARAM_MODE);
-		state = (GameState) session.get(MainMenu.PARAM_GAME);
+		state = (ClientGameState) session.get(MainMenu.PARAM_GAME);
 		client = (Client) session.get(MainMenu.PARAM_CLIENT);
 
 		loadingInfo = "Carregando Imagens";
@@ -82,7 +83,7 @@ public class LoungeMenu extends Application implements ClientListener {
 
 	@Override
 	public void exitClient(String id) {
-		state.players.remove(id);
+		state.getPlayers().remove(id);
 	}
 
 	@Override
@@ -110,23 +111,27 @@ public class LoungeMenu extends Application implements ClientListener {
 	@Override
 	public void updateFallen(List<Fallen> fallen) {
 	}
+	
+	@Override
+	public void updateEvent(EventType event) {
+	}
 
 	private void addPlayer(String id, String name) {
 		//Player player = new RobotNinja(0, 540);
 		Player player = new BlueNinja(0, 540);
 		player.setName(name);
-		state.players.put(id, player);
+		state.getPlayers().put(id, player);
 	}
 
 	@Override
 	public void updateName(String id, String name) {
-		Player player = state.players.get(id);
+		Player player = state.getPlayers().get(id);
 		player.setName(name);
 	}
 
 	@Override
 	public void updateSprite(String id, String sprite) {
-		Player player = state.players.get(id);
+		Player player = state.getPlayers().get(id);
 		if (!player.getSprite().equals(sprite)) {
 			player.setSprite(sprite);
 			player.changeSprite();
@@ -136,7 +141,7 @@ public class LoungeMenu extends Application implements ClientListener {
 
 	@Override
 	public void updateReady(String id) {
-		Player player = state.players.get(id);
+		Player player = state.getPlayers().get(id);
 		player.setState(ServerPlayer.STATE_READY);
 	}
 
@@ -158,7 +163,7 @@ public class LoungeMenu extends Application implements ClientListener {
 		int cx = 30, cy = 70, padding = 30, offset = 160;
 
 		int i = 0;
-		for (Player player : state.players.values()) {
+		for (Player player : state.getPlayers().values()) {
 
 			slot.simpleDraw(g, cx + 160 * i, cy);
 			g.drawString(player.getName(), cx + padding + offset * i, cy + padding + 6);
@@ -177,8 +182,8 @@ public class LoungeMenu extends Application implements ClientListener {
 			i++;
 		}
 
-		if (state.players.size() > 0) {
-			Player player = state.players.get(me);
+		if (state.getPlayers().size() > 0) {
+			Player player = state.getPlayers().get(me);
 			if (!ServerPlayer.STATE_READY.equals(player.getState())) {
 				g.drawString(this, "PRESS ENTER TO START");
 			} else {
