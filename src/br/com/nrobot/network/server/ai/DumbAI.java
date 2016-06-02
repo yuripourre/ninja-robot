@@ -1,6 +1,6 @@
 package br.com.nrobot.network.server.ai;
 
-import br.com.nrobot.network.server.NRobotBattleServerProtocol;
+import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.player.Bot;
 
 public class DumbAI implements AI {
@@ -22,13 +22,13 @@ public class DumbAI implements AI {
 				player.goingLeft = false;
 				player.goingRight = true;
 			}
-		} else if (player.goingRight) { 
-			if(player.x + SPRITE_SIZE + player.speed + BORDER < NRobotBattleServerProtocol.WIDTH) {
+		} else if (player.goingRight) {
+			if(player.x + SPRITE_SIZE + player.speed + BORDER < BattleServerProtocol.WIDTH) {
 				if (!player.pad.right) {
 					player.pad.left = false;
 					player.pad.right = true;
 				}
-				
+
 			} else {
 				player.goingRight = false;
 				player.goingLeft = true;
@@ -36,7 +36,7 @@ public class DumbAI implements AI {
 		} else {
 			player.goingRight = true;
 		}
-		
+
 	}
 
 }

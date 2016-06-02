@@ -13,9 +13,9 @@ import br.com.etyllica.core.event.MouseButton;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.ImageLayer;
-import br.com.nrobot.fallen.Bomb;
+import br.com.nrobot.fallen.Hive;
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.fallen.Nut;
+import br.com.nrobot.fallen.Leaf;
 import br.com.nrobot.player.RobotNinja;
 
 public class SinglePlayerGame extends Application implements OnAnimationFinishListener, UpdateIntervalListener {
@@ -31,11 +31,11 @@ public class SinglePlayerGame extends Application implements OnAnimationFinishLi
 	private boolean gameIsOver = false;
 
 	private List<Fallen> pieces = new ArrayList<Fallen>();
-	
+
 	public SinglePlayerGame(int w, int h) {
 		super(w, h);
 	}
-	
+
 	@Override
 	public void load() {
 
@@ -45,7 +45,7 @@ public class SinglePlayerGame extends Application implements OnAnimationFinishLi
 
 		loading = 40;
 
-		gameOver = new ImageLayer("gameover.png");		
+		gameOver = new ImageLayer("gameover.png");
 
 		loading = 60;
 
@@ -67,17 +67,17 @@ public class SinglePlayerGame extends Application implements OnAnimationFinishLi
 		int x = random.nextInt(w);
 
 		int type = random.nextInt(100);
-		
+
 		int speed = 3+random.nextInt(3);
 
 		if(type > bombPercentage) {
-			
-			Nut nut = new Nut(x, -20);
-			nut.setSpeed(speed);
-			
-			pieces.add(nut);			
+
+			Leaf leaf = new Leaf(x, -20);
+			leaf.setSpeed(speed);
+
+			pieces.add(leaf);
 		} else {
-			pieces.add(new Bomb(x, -20, this));
+			pieces.add(new Hive(x, -20));
 		}
 
 	}
@@ -164,7 +164,7 @@ public class SinglePlayerGame extends Application implements OnAnimationFinishLi
 
 		gameIsOver = true;
 
-		int points = robot.getPoints(); 
+		int points = robot.getPoints();
 
 		if(points > 0) {
 			if(points == 1) {

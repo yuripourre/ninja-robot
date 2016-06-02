@@ -4,25 +4,25 @@ import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.graphics.Graphics;
 import br.com.etyllica.layer.GeometricLayer;
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.network.client.NRobotClientProtocol;
+import br.com.nrobot.network.client.ClientProtocol;
 
 public abstract class Player {
 	protected String name;
-	protected String sprite = NRobotClientProtocol.SPRITE_BLUE;
+	protected String sprite = ClientProtocol.SPRITE_BLUE;
 	protected String item = ServerPlayer.ITEM_NONE;
 	protected String state = ServerPlayer.STATE_NONE;
-		
+
 	protected boolean walkRight = false;
 	protected boolean walkLeft = false;
-	
+
 	protected boolean turnRight = false;
-	
+
 	protected int speed = 10;
-	
+
 	protected GeometricLayer hitbox;
-	
+
 	private int points = 0;
-	
+
 	private boolean dead = false;
 
 	public abstract void turnRight();
@@ -33,15 +33,15 @@ public abstract class Player {
 	public abstract void attack();
 	public abstract void jumpUp();
 	public abstract void jumpDown();
-	
+
 	public Player(int x, int y) {
 		super();
 	}
-	
+
 	public abstract void update(long now);
 
 	public abstract void draw(Graphics g);
-	
+
 	public boolean colide(Fallen fallen) {
 		return hitbox.colideRect(fallen);
 	}
@@ -52,25 +52,25 @@ public abstract class Player {
 			turnRight = true;
 			turnRight();
 		}
-		
+
 		if(event.isKeyUp(KeyEvent.VK_RIGHT_ARROW)) {
 			walkRight = false;
 		}
-		
+
 		if(event.isKeyDown(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = true;
 			turnRight = false;
 			turnLeft();
 		}
-		
+
 		if(event.isKeyUp(KeyEvent.VK_LEFT_ARROW)) {
 			walkLeft = false;
 		}
 	}
-	
+
 	public int getPoints() {
 		return points;
-	}	
+	}
 
 	public void addPoint() {
 		points++;
@@ -83,16 +83,16 @@ public abstract class Player {
 	public void setDead(boolean dead) {
 		this.dead = dead;
 	}
-	
+
 	public abstract void setPosition(int x, int y);
 
 	public void setState(String state) {
 		if (this.state.equals(state)) {
 			return;
 		}
-		
+
 		this.state = state;
-		
+
 		if(ServerPlayer.STATE_WALK_LEFT.equals(state)) {
 			turnLeft();
 			walk();
@@ -115,10 +115,10 @@ public abstract class Player {
 			attack();
 		}
 	}
-		
+
 	public abstract void updatePlayer(long now);
 	public abstract void changeSprite();
-	
+
 	public void setPoints(int points) {
 		this.points = points;
 	}
@@ -130,15 +130,15 @@ public abstract class Player {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getSprite() {
 		return sprite;
 	}
-	
+
 	public void setSprite(String sprite) {
 		this.sprite = sprite;
 	}
-	
+
 	public String getItem() {
 		return item;
 	}
@@ -146,12 +146,12 @@ public abstract class Player {
 	public void setItem(String item) {
 		this.item = item;
 	}
-		
+
 	public String getState() {
 		return state;
 	}
 
 	public abstract int getX();
 	public abstract int getY();
-			
+
 }

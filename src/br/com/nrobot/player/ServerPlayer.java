@@ -3,15 +3,15 @@ package br.com.nrobot.player;
 import java.util.Collection;
 
 import br.com.nrobot.fallen.Fallen;
-import br.com.nrobot.network.client.NRobotClientProtocol;
-import br.com.nrobot.network.server.NRobotBattleServerProtocol;
+import br.com.nrobot.network.client.ClientProtocol;
+import br.com.nrobot.network.server.BattleServerProtocol;
 import br.com.nrobot.network.server.model.GamePad;
 import br.com.nrobot.network.server.model.PlayerRole;
 
 public class ServerPlayer {
 
 	private static final int SPRITE_SIZE = 64;
-	
+
 	public static final String STATE_READY = "R";
 	public static final String STATE_NONE = "N";
 	public static final String STATE_WALK_LEFT = "l";
@@ -25,18 +25,17 @@ public class ServerPlayer {
 
 	public static final String ITEM_NONE = "N";
 	public static final String ITEM_GLUE = "Glue";
-	public static final String ITEM_TONIC = "Tonic";
 	public static final String ITEM_RESSURRECT = "Dead";
 
 	public int x = 0;
 	public int y = 520;
-	
+
 	public int playerY = 520;
 
 	public int speed = 15;
-	public int jumpSpeed = 10;
+	public int jumpSpeed = 25;
 
-	public int jumpDelay = 600;
+	public int jumpDelay = 700;
 	public int freezeDelay = 2500;
 	public int points = 0;
 	public String id = "";
@@ -47,7 +46,7 @@ public class ServerPlayer {
 	public String item = ITEM_NONE;
 
 	public PlayerRole role = PlayerRole.HUMAN;
-	
+
 	public GamePad pad;
 	public boolean dead = false;
 	public boolean jumping = false;
@@ -62,35 +61,35 @@ public class ServerPlayer {
 	}
 
 	public void handleEvent(String msg, Collection<ServerPlayer> players) {
-		
+
 		String[] parts = msg.split(" ");
 		String state = parts[1];
 		String key = parts[2];
-		
-		if(NRobotClientProtocol.STATE_PRESS.equals(state)) {
 
-			if(NRobotClientProtocol.KEY_RIGHT.equals(key)) {
+		if(ClientProtocol.STATE_PRESS.equals(state)) {
+
+			if(ClientProtocol.KEY_RIGHT.equals(key)) {
 				pad.right = true;
-			} else if (NRobotClientProtocol.KEY_LEFT.equals(key)) {
+			} else if (ClientProtocol.KEY_LEFT.equals(key)) {
 				pad.left = true;
-			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
+			} else if (ClientProtocol.KEY_JUMP.equals(key)) {
 				pad.jump = true;
-			} else if (NRobotClientProtocol.KEY_ATTACK.equals(key)) {
+			} else if (ClientProtocol.KEY_ATTACK.equals(key)) {
 				if(!jumping) {
 					pad.attack = true;
 				}
-			} else if (NRobotClientProtocol.KEY_ITEM.equals(key)) {
+			} else if (ClientProtocol.KEY_ITEM.equals(key)) {
 				useItem(players);
 			}
-		} else if (NRobotClientProtocol.STATE_RELEASE.equals(msg.split(" ")[1])) {
+		} else if (ClientProtocol.STATE_RELEASE.equals(msg.split(" ")[1])) {
 
-			if (NRobotClientProtocol.KEY_RIGHT.equals(key)) {
+			if (ClientProtocol.KEY_RIGHT.equals(key)) {
 				pad.right = false;
-			} else if(NRobotClientProtocol.KEY_LEFT.equals(key)) {
+			} else if(ClientProtocol.KEY_LEFT.equals(key)) {
 				pad.left = false;
-			} else if (NRobotClientProtocol.KEY_JUMP.equals(key)) {
+			} else if (ClientProtocol.KEY_JUMP.equals(key)) {
 				pad.jump = false;
-			} else if (NRobotClientProtocol.KEY_ATTACK.equals(key)) {
+			} else if (ClientProtocol.KEY_ATTACK.equals(key)) {
 				pad.attack = false;
 			}
 		}
@@ -128,7 +127,7 @@ public class ServerPlayer {
 			}
 			state = STATE_WALK_LEFT;
 		} else if (pad.right && !pad.attack) {
-			if(x + SPRITE_SIZE < NRobotBattleServerProtocol.WIDTH-speed) {
+			if(x + SPRITE_SIZE < BattleServerProtocol.WIDTH-speed) {
 				x+= speed;
 			}
 			state = STATE_WALK_RIGHT;
@@ -150,7 +149,7 @@ public class ServerPlayer {
 				y -= jumpSpeed;
 			} else if(fallen) {
 				if(y < playerY) {
-					y += jumpSpeed;	
+					y += jumpSpeed;
 				} else {
 					y = playerY;
 					jumping = false;
@@ -160,9 +159,9 @@ public class ServerPlayer {
 			} else {
 				fallen = true;
 			}
-			
+
 			if (!fallen) {
-				state = STATE_JUMPING_UP;	
+				state = STATE_JUMPING_UP;
 			} else {
 				state = STATE_JUMPING_DOWN;
 			}
