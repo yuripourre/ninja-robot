@@ -8,9 +8,7 @@ import br.com.nrobot.network.server.ai.DumbAI;
 import br.com.nrobot.player.Bot;
 import br.com.nrobot.player.ServerPlayer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BattleServerProtocol extends ServerProtocol {
 
@@ -144,43 +142,11 @@ public class BattleServerProtocol extends ServerProtocol {
 
 		message += PREFIX_FALLEN + " ";
 		for (Fallen f : fallen) {
-			message += f.getType().param + " ";
+			message += f.getType().prefix + " ";
 			message += f.asText() + " ";
 		}
 
 		sendTCPtoAll(message);
-	}
-
-	private void createPiece() {
-		final int leafInterval = 50; // 50%
-		final int hiveInterval = 25; // 25%
-		final int bombInterval = 8;  // etc...
-		final int glueInterval = 5;
-
-		final int x = random.nextInt(WIDTH), y = -20;
-		final int type = random.nextInt(100);
-		int accu = leafInterval;
-
-		if (type < accu) {
-			Leaf leaf = new Leaf(x, y);
-			leaf.setSpeed(3 + random.nextInt(3));
-			fallen.add(leaf);
-		} else {
-			accu += hiveInterval;
-			if (type < accu) {
-				fallen.add(new Hive(x, y));
-			} else {
-				accu += bombInterval;
-				if (type < accu){
-					fallen.add(new Bomb(x, y));
-				} else {
-					accu += glueInterval;
-					if (type < accu) {
-						fallen.add(new Glue(x, y));
-					}
-				}
-			}
-		}
 	}
 
 	public void update(long now) {
@@ -193,7 +159,27 @@ public class BattleServerProtocol extends ServerProtocol {
 
 		if (now > lastCreation + delay) {
 			lastCreation = now;
-			createPiece();
+			createFallen();
+		}
+	}
+
+	private void createFallen() {
+		final Map<FallenType, Integer> probabilities = new HashMap<>();
+		probabilities.put(FallenType.LEAF, 40); // 40%
+		probabilities.put(FallenType.HIVE, 20); // 20%
+		probabilities.put(FallenType.BOMB, 2);  // etc
+		probabilities.put(FallenType.GLUE, 1);
+
+		final int x = random.nextInt(WIDTH), y = -20;
+		final int value = random.nextInt(100);
+		int runningSum = 0;
+
+		for (FallenType type : probabilities.keySet()) {
+			runningSum += probabilities.get(type);
+			if (value < runningSum) {
+				fallen.add(type.create(x, y));
+				break;
+			}
 		}
 	}
 

@@ -22,19 +22,19 @@ public enum FallenType {
 		}
 	};
 
-	public final String param;
+	public final String prefix;
 
-	FallenType(String param) {
-		this.param = param;
+	FallenType(String prefix) {
+		this.prefix = prefix;
 	}
 
-	public static FallenType fromParam(String param) {
+	public static FallenType fromParam(String prefix) {
 		for (FallenType type : values()) {
-			if (type.param.equals(param)) {
+			if (type.prefix.equals(prefix)) {
 				return type;
 			}
 		}
-		throw new IllegalArgumentException("Unknown FallenType: " + param);
+		throw new IllegalArgumentException("Unknown FallenType: " + prefix);
 	}
 
 	public abstract Fallen create(int x, int y);
