@@ -15,10 +15,7 @@ import java.util.Random;
 public class BattleServerProtocol extends ServerProtocol {
 
 	public static final String PREFIX_BOT = "B";
-	public static final String PREFIX_HIVE = "H";
-	public static final String PREFIX_LEAF = "L";
-	public static final String PREFIX_BOMB = "B";
-	public static final String PREFIX_GLUE = "G";
+	public static final String PREFIX_FALLEN = "F";
 
 	private static final int NUMBER_OF_BOTS = 1;
 	private static final AI ai = new DumbAI();
@@ -28,10 +25,7 @@ public class BattleServerProtocol extends ServerProtocol {
 	private final long delay = 400;
 	private boolean roomReady = false;
 
-	private List<Fallen> leaves = new ArrayList<>();
-	private List<Fallen> hives = new ArrayList<>();
-	private List<Fallen> bombs = new ArrayList<>();
-	private List<Fallen> glues = new ArrayList<>();
+	private List<Fallen> fallen = new ArrayList<>();
 
 	public BattleServerProtocol() {
 		super();
@@ -148,25 +142,10 @@ public class BattleServerProtocol extends ServerProtocol {
 			message += player.asText() + " ";
 		}
 
-		//Add hives and fallen items
-		message += PREFIX_LEAF + " ";
-		for (Fallen leaf : leaves) {
-			message += leaf.asText() + " ";
-		}
-
-		message += PREFIX_HIVE + " ";
-		for (Fallen hive : hives) {
-			message += hive.asText() + " ";
-		}
-
-		message += PREFIX_GLUE + " ";
-		for (Fallen glue : glues) {
-			message += glue.asText() + " ";
-		}
-
-		message += PREFIX_BOMB + " ";
-		for (Fallen bomb : bombs) {
-			message += bomb.asText() + " ";
+		message += PREFIX_FALLEN + " ";
+		for (Fallen f : fallen) {
+			message += f.getType().param + " ";
+			message += f.asText() + " ";
 		}
 
 		sendTCPtoAll(message);
@@ -185,19 +164,19 @@ public class BattleServerProtocol extends ServerProtocol {
 		if (type < accu) {
 			Leaf leaf = new Leaf(x, y);
 			leaf.setSpeed(3 + random.nextInt(3));
-			leaves.add(leaf);
+			fallen.add(leaf);
 		} else {
 			accu += hiveInterval;
 			if (type < accu) {
-				hives.add(new Hive(x, y));
+				fallen.add(new Hive(x, y));
 			} else {
 				accu += bombInterval;
 				if (type < accu){
-					bombs.add(new Bomb(x, y));
+					fallen.add(new Bomb(x, y));
 				} else {
 					accu += glueInterval;
 					if (type < accu) {
-						glues.add(new Glue(x, y));
+						fallen.add(new Glue(x, y));
 					}
 				}
 			}
@@ -210,11 +189,7 @@ public class BattleServerProtocol extends ServerProtocol {
 		}
 
 		updatePlayers(now);
-
-		leaves = updatePieceList(now, leaves);
-		hives = updatePieceList(now, hives);
-		glues = updatePieceList(now, glues);
-		bombs = updatePieceList(now, bombs);
+		updateFallen(now);
 
 		if (now > lastCreation + delay) {
 			lastCreation = now;
@@ -222,29 +197,26 @@ public class BattleServerProtocol extends ServerProtocol {
 		}
 	}
 
-	private List<Fallen> updatePieceList(long now, List<Fallen> list) {
+	private void updateFallen(long now) {
 		final List<Fallen> newFallen = new ArrayList<>();
-		for (Fallen fallen : list) {
-			fallen.update(now);
+		for (Fallen f : fallen) {
+			f.update(now);
 
-			if (fallen.getY() > HEIGHT) {
-				fallen.markForRemoval();
+			if (f.getY() > HEIGHT) {
+				f.markForRemoval();
 			}
 
-			checkCollisions(fallen);
+			checkCollisions(f);
 
-			if (!fallen.isMarkedForRemoval()) {
-				newFallen.add(fallen);
+			if (!f.isMarkedForRemoval()) {
+				newFallen.add(f);
 			}
 		}
-		return newFallen;
+		fallen = newFallen;
 	}
 
 	private void checkCollisions(Fallen fallen) {
-		for (ServerPlayer player : players.values()) {
-			if (!player.isDead()) {
-				fallen.colide(player);
-			}
-		}
+		players.values().stream().filter(player -> !player.isDead())
+								 .forEach(fallen::colide);
 	}
 }

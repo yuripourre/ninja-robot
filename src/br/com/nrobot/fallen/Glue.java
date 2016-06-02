@@ -10,6 +10,11 @@ public class Glue extends Leaf {
 	}
 
 	@Override
+	public FallenType getType() {
+		return FallenType.GLUE;
+	}
+
+	@Override
 	public void affectPlayer(ServerPlayer player) {
 		player.item = ServerPlayer.ITEM_GLUE;
 	}

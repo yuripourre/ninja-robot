@@ -129,52 +129,24 @@ public class ClientProtocol extends StringClientProtocol {
 
 	private void notifyPositionsUpdate(String message) {
 		final String[] fields = message.split(" ");
-		final int playerAttributes = 6, fallenAttributes = 2;
+		final int playerAttributes = 6, fallenAttributes = 3;
 		final List<PlayerData> playersData = new ArrayList<>();
 		final List<Fallen> fallen = new ArrayList<>();
 
 		int position = 0;
 
 		for (; position < fields.length; position += playerAttributes) {
-			if (BattleServerProtocol.PREFIX_LEAF.equals(fields[position])) {
+			if (BattleServerProtocol.PREFIX_FALLEN.equals(fields[position])) {
 				break;
 			}
 			playersData.add(PlayerData.fromFields(fields, position));
 		}
 
-		fallen:
 		for (position++; position < fields.length; position += fallenAttributes) {
-
-			if (BattleServerProtocol.PREFIX_HIVE.equals(fields[position])) {
-				for (position++; position < fields.length; position += fallenAttributes) {
-
-					if (BattleServerProtocol.PREFIX_GLUE.equals(fields[position])) {
-						for (position++; position < fields.length; position += fallenAttributes) {
-							if (BattleServerProtocol.PREFIX_BOMB.equals(fields[position])) {
-								for (position++; position < fields.length; position += fallenAttributes) {
-									int x = Integer.parseInt(fields[position]);
-									int y = Integer.parseInt(fields[position + 1]);
-									fallen.add(new Bomb(x, y));
-								}
-								break fallen;
-							}
-							int x = Integer.parseInt(fields[position]);
-							int y = Integer.parseInt(fields[position + 1]);
-							fallen.add(new Glue(x, y));
-						}
-						break;
-					}
-
-					int x = Integer.parseInt(fields[position]);
-					int y = Integer.parseInt(fields[position + 1]);
-					fallen.add(new Hive(x, y));
-				}
-				break;
-			}
-
-			int x = Integer.parseInt(fields[position]);
-			int y = Integer.parseInt(fields[position + 1]);
-			fallen.add(new Leaf(x, y));
+			FallenType fallenType = FallenType.fromParam(fields[position]);
+			int x = Integer.parseInt(fields[position + 1]);
+			int y = Integer.parseInt(fields[position + 2]);
+			fallen.add(fallenType.create(x, y));
 		}
 
 		listener.updatePlayers(playersData);

@@ -18,6 +18,11 @@ public class Bomb extends Fallen {
 	}
 
 	@Override
+	public FallenType getType() {
+		return FallenType.BOMB;
+	}
+
+	@Override
 	public void update(long now) {
 		super.update(now);
 		explosion.animate(now);

@@ -11,6 +11,11 @@ public class Hive extends Fallen {
 	}
 
 	@Override
+	public FallenType getType() {
+		return FallenType.HIVE;
+	}
+
+	@Override
 	public void colide(Player player) {
 		if(!visible)
 			return;

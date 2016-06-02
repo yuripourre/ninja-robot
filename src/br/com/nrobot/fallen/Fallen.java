@@ -15,6 +15,10 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 		super(x, y, path);
 	}
 
+	public abstract FallenType getType();
+	public abstract void colide(Player player);
+	public abstract void affectPlayer(ServerPlayer player);
+
 	public void markForRemoval() {
 		markedForRemoval = true;
 	}
@@ -30,8 +34,6 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 		}
 	}
 
-	public abstract void colide(Player player);
-
 	public void colide(ServerPlayer player) {
 		if (!visible)
 			return;
@@ -41,8 +43,6 @@ public abstract class Fallen extends ImageLayer implements Updatable {
 			affectPlayer(player);
 		}
 	}
-
-	public abstract void affectPlayer(ServerPlayer player);
 
 	public int getSpeed() {
 		return speed;

@@ -9,6 +9,11 @@ public class Leaf extends Fallen {
 		super(x, y, "items/leaf.png");
 	}
 
+	@Override
+	public FallenType getType() {
+		return FallenType.LEAF;
+	}
+
 	public Leaf(int x, int y, String path) {
 		super(x, y, path);
 	}
